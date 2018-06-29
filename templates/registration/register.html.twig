@@ -1,0 +1,20 @@
+{% extends 'layout/security-layout.html.twig' %}
+
+{% block form %}
+    <div class="grid-container">
+        <div class="grid-x grid-padding-x grid-padding-y">
+            <div class="small-5 cell">
+                <p><a href="{{ path('login') }}">Войти</a></p>
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                {{ form_row(form.username) }}
+                {{ form_row(form.email) }}
+                {{ form_row(form.plainPassword.first) }}
+                {{ form_row(form.plainPassword.second) }}
+                {{ form_row(form.avatar) }}
+                {{ form_row(form.submit) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

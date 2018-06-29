@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <div class="grid-container">
+        <div class="grid-x grid-padding-x cell">
+            <div class="small-12 cell">
+                {{ include('profile/_breadcrumbs.html.twig', {
+                    'path': 'profile_page',
+                    'section': 'Профиль',
+                    'entity': pageUser,
+                    'entityId': pageUser.id,
+                    'ditailedPage': pageUser.username,
+                    'currentPage': 'Выши отзывы'}) }}
+            </div>
+            {#<aside class="small-12 medium-12 large-3 cell">#}
+                {#{% if (is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')) %}#}
+                    {#{% if pageUser == authorizedUser %}#}
+                        {#<ul>#}
+                            {#<li>#}
+                                {#<p><a href="{{ path('show_comment', {'id': pageUser.id }) }}">Мои отзывы</a></p>#}
+                                {#<p><a href="{{ path('edit-profile', {'id' : pageUser.id}) }}">Настройки</a></p>#}
+                                {#<p><a href="{{ path('history_issuance', {'id' : pageUser.id}) }}">История взятых#}
+                                        {#книг</a></p>#}
+                                {#<p><a href="{{ path('taken_book', {'id' : pageUser.id}) }}">Книги у меня</a></p>#}
+                                {#<p><a href="{{ path('liked_books', {'id' : pageUser.id}) }}">Понравившиеся книги</a></p>#}
+                            {#</li>#}
+                        {#</ul>#}
+                    {#{% endif %}#}
+                {#{% endif %}#}
+            {#</aside>#}
+            {{ include('profile/_aside.html.twig') }}
+
+            <div class="small-12 medium-12 large-9 cell">
+                <div class="grid-container">
+                    <div class="grid-x grid-padding-x cell">
+                        <div class="small-12">
+                            <h6>User name:{{ pageUser.username }}</h6>
+                            <img src="{{ pageUser.avatar }}" alt="avatar">
+                        </div>
+                    </div>
+                    <div class="grid-x grid-padding-x cell">
+                        <div class="small-12">
+                            <h2 class="text-center">История книг</h2>
+                            <div class="grid-container">
+                                <div class="grid-x grid-padding-x cell">
+                                    {{ include('profile/_history-issuance.html.twig', {'issuances': userBooks} ) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

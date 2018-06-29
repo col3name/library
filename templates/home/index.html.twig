@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <div id="element">elelment</div>
+    <div class="grid-container">
+        <div class="grid-x grid-padding-x grid-padding-y">
+            <div class="small-12 cell">
+                {{ include('profile/_breadcrumbs.html.twig', {
+                    'path': 'homepage',
+                    'section': '',
+                    'entityId': '',
+                    'entity': '',
+                    'ditailedPage': '',
+                    'currentPage': ''}) }}
+            </div>
+            <div class="small-12 cell">
+                <div class="grid-container">
+                    <div class="grid-x grid-padding-x">
+                        <div class="small-12 cell">
+                            <h4>Последние книги</h4>
+                        </div>
+                    </div>
+                    <div class="grid-x grid-padding-x">
+                        {{ include('home/_show-books.html.twig', {'books': recentBooks}) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="el">sfsdaf</div>
+        <div class="grid-x grid-padding-x grid-padding-y">
+            <div class="small-12 cell">
+                <div class="grid-container">
+                    <div class="grid-x grid-padding-x">
+                        <div class="small-12 cell">
+                            <h4>Популярные книги</h4>
+                        </div>
+                    </div>
+                    <div id="showBook" class="grid-x grid-padding-x">
+                        {% for ratings in popularBooks %}
+                            <div class="small-offset-1 small-10 medium-offset-0 medium-4 large-3 cell">
+                                {{ include('home/_book-card.html.twig', {'bookCopy': ratings.rate.bookCopy}) }}
+                            </div>
+                        {% else %}
+                            <p>Книги не найдены</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

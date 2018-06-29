@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+
+    <div class="grid-container">
+        <div class="grid-x grid-padding-x grid-padding-y">
+            <div class="small-12 cell">
+                {{ include('profile/_breadcrumbs.html.twig', {
+                    'path': 'catalog_page',
+                    'section': 'Каталог',
+                    'entityId': '',
+                    'entity': bookCopy,
+                    'ditailedPage': bookCopy.book.name,
+                    'currentPage': ''}) }}
+            </div>
+            <div class="large-4 cell">
+                <img class="book-image" src="/{{ bookCopy.imagePath }}" alt="">
+            </div>
+            <div class="large-8 cell">
+                {{ include('catalog/_show-book.html.twig') }}
+                <div>{{ include('catalog/_comment-book.html.twig') }}</div>
+            </div>
+            <div class="small-12 cell">
+                <h5>Описание:</h5>
+                <p>{{ bookCopy.book.description }}</p>
+            </div>
+            <div class="small-12 cell">
+                <h5>У кого книги: </h5>
+                {% for whoHasBook in whoHasBooks %}
+                    <img src="{{ whoHasBook.readerAvatar }}" alt="">
+                    <p>
+                        <a href="{{ path('profile_page', {'id': whoHasBook.readerId }) }}"> {{ whoHasBook.readerName }}</a>
+                    </p>
+                    <p>Освободиться ближе к
+                        <time>{{ whoHasBook.deadlineDate|date("d M Y") }}</time>
+                    </p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-container">
+        <div class="grid-x grid-padding-x grid-padding-y">
+            <div class="large-12 cell">
+                <h4>Отзывы</h4>
+            </div>
+            <div class="large-12 cell">
+                {{ include('catalog/_comment-show.html.twig', {
+                    'comments': bookCopy.comments,
+                    'nullMessage': 'Станьте первым кто оставит комментарий!'}) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/vendor/jquery.raty.js') }}"></script>
+
+{% endblock %}

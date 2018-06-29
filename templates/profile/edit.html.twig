@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <div class="grid-container">
+        <div class="grid-x grid-padding cell">
+            <div class="small-12 cell">
+                {{ include('profile/_breadcrumbs.html.twig', {
+                    'path': 'profile_page',
+                    'section': 'Профиль',
+                    'entityId': user.id,
+                    'entity': user,
+                    'ditailedPage': user.username,
+                    'currentPage': 'Найстроки'}) }}
+            </div>
+            <div class="small-12 cell">
+                {{ form_start(form) }}
+                {{ form_row(form.email) }}
+                {{ form_row(form.username) }}
+                {{ form_row(form.avatar) }}
+                {{ form_row(form.plainPassword) }}
+                <button class="button" type="submit">Сохранить</button>
+                <a class="button" href="{{ path('profile_page', {'id': user.id}) }}">Отмена</a>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

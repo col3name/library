@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head lang="ru">
+    {% block head %}
+        <meta charset="utf-8">
+        <title>Booklibrary {% block title %}{% endblock %}</title>
+        {% block stylesheets %}
+            <link href="{{ asset('css/foundation.css') }}" rel="stylesheet"/>
+            <link href="{{ asset('css/foundation-icons.css') }}" rel="stylesheet"/>
+            <link href="{{ asset('css/app.css') }}" rel="stylesheet"/>
+        {% endblock %}
+    {% endblock %}
+</head>
+{% include 'header.html.twig' %}
+{% block main %}{% endblock %}
+{% include 'footer.html.twig' %}
+</html>

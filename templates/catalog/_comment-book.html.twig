@@ -1,0 +1,22 @@
+{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+    {% if is_granted('ROLE_USER') %}
+
+        {% if countFreeBooks > 0 and isUserHasBooks != true %}
+            <input type="button" class="button" id="takenBook" value="Взять книгу"
+                   data-bookCopyId="{{ bookCopy.id }}">
+        {% endif %}
+        {% if isUserHasBooks %}
+            <input type="button" class="button" id="returnBook" value="Вернуть книгу"
+                   data-issuanceId="{{ issuanceId }}"
+            >
+        {% endif %}
+    {% endif %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <a class="button" href="{{ path('book_edit', {'id': bookCopy.Id }) }}">Редактировать</a>
+    {% endif %}
+    <hr>
+    {{ render(controller('App\\Controller\\CatalogController:commentForm', {'id': bookCopy.id})) }}
+{% else %}
+    <p><a class="button" href="{{ path('login') }}">Войти и написать отзыв</a>
+    </p>
+{% endif %}

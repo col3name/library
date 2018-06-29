@@ -1,0 +1,9 @@
+{% for issuance in issuances %}
+    <div class="small-12 medium-6 large-4 cell">
+        {{ include('profile/_taken_book.html.twig') }}
+        {#{{ path('returnBook') }}#}
+        {#<a href="{{ path('returnBook', {'id': issuance.id}) }}">Вернуть книгу</a>#}
+    </div>
+{% else %}
+    <p>Книги не найдены</p>
+{% endfor %}

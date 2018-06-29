@@ -1,0 +1,27 @@
+{% block comment %}
+    <hr>
+    {% for comment in comments %}
+        <div class="grid-container">
+            <div class="grid-x grid-padding-x grid-padding-y">
+                <div class="medium-2 cell">
+                    <p>
+                        {% if is_granted('ROLE_USER') %}
+                            <a href="{{ path('profile_page', {'id': comment.author.id}) }}">
+                                Автор
+                            </a>
+                        {% else %}
+                            <span class="">Админ</span>
+                        {% endif %}
+                    </p>
+                    <time>{{ comment.date|date("d M Y h:m", "Europe/Paris")|trans }}</time>
+                </div>
+                <div class="medium-10 cell">
+                    <p>{{ comment.text }}</p>
+                </div>
+            </div>
+        </div>
+        <hr>
+    {% else %}
+        <p>{{ nullMessage }}</p>
+    {% endfor %}
+{% endblock %}

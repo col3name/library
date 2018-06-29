@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+{% block main %}
+    <div class="grid-container">
+        <div class="grid-x grid-padding-x grid-padding-y">
+            <div class="small-12 cell">
+                {{ include('profile/_breadcrumbs.html.twig', {
+                    'path': 'ajax_search',
+                    'section': 'Поиск',
+                    'entityId': '',
+                    'entity': '',
+                    'ditailedPage': '',
+                    'currentPage': ''
+                }) }}
+            </div>
+            <div class="small-12 cell">
+                {% block search %}
+                    <div class="sidebar-search">
+                        <form action="{{ path('ajax_search') }}" method="GET">
+                            <div class="">
+                                <input type="text" id="search" class="search-box" name="q" placeholder="Выберите...">
+                                <button class="search-button" type="submit"><i class="fi-magnifying-glass fi-list-size"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                    <hr>
+                    <ul class="nav" id="side-menu">
+                        <li>
+                            <ul class="nav nav-second-level entitiesNav" id="entitiesNav">
+                            </ul>
+                        </li>
+                    </ul>
+                {% endblock %}
+            </div>
+        </div>
+        {% for bookCopy in foundBooks %}
+            {#<div class="small-12 medium-6 large-4 cell">#}
+            {#<img src="{{ bookCopy.imagePath }}" alt="book image">#}
+            {#<h5>#}
+            {#<a href="{{ path('catalog_show', {'id': bookCopy.id}) }}">{{ bookCopy.book.name }}</a>#}
+            {#</h5>#}
+            {#<p>{{ bookCopy.book.description|length > 40 ? bookCopy.book.description|slice(0, 40) ~ '...' : bookCopy.book.description }}</p>#}
+            {#</div>#}
+        {% else %}
+            <p>Книги не найдены</p>
+        {% endfor %}
+    </div>
+{% endblock %}

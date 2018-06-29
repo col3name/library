@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <div class="grid-container">
+        <div class="grid-x grid-padding-x cell">
+            <div class="small-12 cell">
+                {{ include('profile/_breadcrumbs.html.twig', {
+                    'path': 'profile_page',
+                    'section': 'Профиль',
+                    'entity': pageUser,
+                    'entityId': pageUser.id,
+                    'ditailedPage': pageUser.username,
+                    'currentPage': 'Понравивиеся книги'}) }}
+            </div>
+            {{ include('profile/_aside.html.twig') }}
+            <div class="small-12 medium-12 large-9 cell">
+                <div class="grid-container">
+                    <div class="grid-x grid-padding-x cell">
+                        {% for bookCopy in pageUser.favoritesBookCopy %}
+                            <div class="small-12 medium-6 large-4 cell">
+                                {% if is_granted('ROLE_USER') %}
+                                    <span id="like" data-bookCopyId="{{ bookCopy.id }}"><i class="fi-heart fi-list-size like"></i></span>
+                                {% endif %}
+                                {{ include('home/_book-card.html.twig') }}
+                            </div>
+                        {% else %}
+                            Книг не найдено
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

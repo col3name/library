@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <div class="grid-container">
+        <div class="grid-x grid-padding cell">
+            <div class="small-12 cell">
+                {{ include('profile/_breadcrumbs.html.twig', {
+                    'path': 'profile_page',
+                    'section': 'Профиль',
+                    'entity': user,
+                    'entityId': user.id,
+                    'ditailedPage': user.username,
+                    'currentPage': 'Выши отзывы'}) }}
+            </div>
+
+            <div class="small-12 cell">
+                <h2>Ваши отзывы</h2>
+            </div>
+            <div class="small-12 cell">
+                {{ include('catalog/_comment-show.html.twig', {
+                    'comments': user.commentsAuthored,
+                    'nullMessage': 'Пока нет отзывов'}) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

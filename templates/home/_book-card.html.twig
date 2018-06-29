@@ -1,0 +1,5 @@
+<img src="/{{ bookCopy.imagePath }}" alt="book image">
+<h6>
+    <a href="{{ path('catalog_show', {'id': bookCopy.id}) }}">{{ bookCopy.book.name }}</a>
+</h6>
+<p>{{ bookCopy.book.description|length > 40 ? bookCopy.book.description|slice(0, 40) ~ '...' : bookCopy.book.description }}</p>

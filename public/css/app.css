@@ -1,0 +1,125 @@
+.login-bg {
+    background-image: url('/image/login-bg.jpeg');
+}
+
+* {
+    /*outline: 0;*/
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-width: 320px;
+}
+
+ul, li, ol {
+    list-style-type: none;
+}
+
+.error-not-found {
+
+}
+
+.not-fount-animate {
+
+}
+
+.fi-like:before {
+    content: "\f164";
+}
+
+@keyframes not-found {
+    0% {
+        bottom: 0;
+        /*box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);*/
+    }
+    50% {
+        bottom: 50px;
+        background-color: #9e0c0f;
+        /*box-shadow: 0 50px 50px rgba(0, 0, 0, 0.1);*/
+    }
+    100% {
+        bottom: 50px;
+        /*box-shadow: 0 50px 50px rgba(0, 0, 0, 0.1);*/
+    }
+}
+
+.not-fount-animate {
+    animation: not-found 0.5s cubic-bezier(0.1, 0.25, 0.1, 1) 0.5s alternate both;
+}
+
+.book-image {
+    max-width: 300px;
+    width: 80%;
+}
+
+.activePage {
+    background: #9facca;
+    border-color: #3e3d3c;
+    color: #ffffff;
+}
+
+.fi-list-size {
+    font-size: 30px;
+
+}
+
+.header-user-icon {
+    max-width: 40px;
+    width: 100%;
+    border-radius: 50%;
+    float: left;
+}
+
+.left {
+    float: left;
+}
+
+.search-box-small {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0 25px 0 10px;
+    transition: all 0.2s ease-in-out;
+    width: 160px;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.search-box-small:focus {
+    width: 360px;
+}
+
+.search-box {
+    padding: 30px 65px;
+    font-size: 25px;
+    background-color: #fefefe;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.like {
+    color: #bfbfbf;
+    transition: all 0.2s ease-in-out;
+}
+
+.like:hover {
+    color: #6d3c3c;
+    cursor: pointer;
+}
+
+.small-image {
+    max-width: 150px!important;
+}
+
+.search-button:hover {
+    cursor: pointer;
+}
+
+.search-active {
+    position: absolute;
+    background: #fffcfc;
+    box-shadow: 1px 50px 50px rgba(0, 0, 0, 0.3);
+    padding: 20px 50px;
+    border-radius: 5px;
+    font-size: 17px;
+    border: 1px solid #ababab;
+    color: #e4e4e4;
+}

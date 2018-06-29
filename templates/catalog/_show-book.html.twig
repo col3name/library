@@ -1,0 +1,35 @@
+<h2>{{ bookCopy.book.name }}</h2>
+<div>
+    {% if is_granted('ROLE_USER') %}
+        <a href="{{ path('liked_books') }}">Избранные</a>
+        <span id="like" data-bookCopyId="{{ bookCopy.id }}"><i class="fi-heart fi-list-size like"></i></span>
+        {% if bookRated == false %}
+            <span id="bookRating"></span>
+        {% endif %}
+    {% endif %}
+
+    <span>Рейтинг: {{ average }}  </span>
+</div>
+<hr>
+<p>ISBN: {{ bookCopy.book.isbn }}</p>
+<p>Количество страниц: {{ bookCopy.book.pageNumber }}</p>
+<p>Год публикации: {{ bookCopy.book.publicationYear }}</p>
+
+{% if bookCopy.book.genresBook|length > 0 %}
+    <p>Жанры:
+        {% for genre in bookCopy.book.genresBook %}
+            <a href="{{ path('catalog_page', {'genreId': genre.id}) }}">{{ genre.name }}</a>
+        {% endfor %}
+    </p>
+{% endif %}
+
+{% if bookCopy.book.authorsBook|length > 0 %}
+    <p>Авторы:
+        {% for author in bookCopy.book.authorsBook %}
+            <a href="{{ path('catalog_page', {'authorId': author.id}) }}"> {{ author.name }}</a>
+        {% endfor %}
+    </p>
+{% endif %}
+{% if bookCopy.filePath|length > 4 %}
+    <p><a href="{{ path('download_book_file', { 'id': bookCopy.id }) }}"><span><i class="fi-list-size fi-download"></i> Скачать pdf</span></a></p>
+{% endif %}

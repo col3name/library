@@ -1,0 +1,14 @@
+{{ form_start(form, {method: 'POST', action: path('comment_new', {'id': post.id})}) }}
+<fieldset>
+    {{ form_errors(form) }}
+    <div class="form-group {% if not form.text.vars.valid %}has-error{% endif %}">
+        {{ form_errors(form.text) }}
+        {{ form_widget(form.text, {attr: {rows: 10}}) }}
+    </div>
+    <div class="form-group">
+        <button class="button" type="submit">
+            <i class="fa fa-paper-plane" aria-hidden="true"></i>Отправить
+        </button>
+    </div>
+</fieldset>
+{{ form_end(form) }}

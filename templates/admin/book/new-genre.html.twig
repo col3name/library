@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <div class="grid-container">
+        <div class="grid-x grid-padding-x">
+            <div class="small-12 cell">
+                {{ include('profile/_breadcrumbs.html.twig', {
+                    'path': 'admin_page',
+                    'section': 'Админка',
+                    'entityId': '',
+                    'entity': 'в',
+                    'currentPage': 'Администрирование книг',
+                    'ditailedPage': 'Добавление автора книги',
+                }) }}
+            </div>
+            <div class="small-12 cell">
+                {{ form_start(form) }}
+                {{ form_widget(form) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

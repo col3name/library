@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+{% block main %}
+<div class="grid-container">
+    <div class="grid-x grid-padding-x grid-padding-y">
+        <div class="small-12 cell">
+            {{ include('profile/_breadcrumbs.html.twig', {
+                'path': 'catalog_page',
+                'section': 'Каталог',
+                'entity': '',
+                'ditailedPage': '',
+                'currentPage': ''}) }}
+            <div class="small-12 cell">
+                <div class="grid-container">
+                    <div class="grid-x grid-padding-x grid-padding-y">
+                        <aside class="medium-12 large-3 cell">
+                            {{ include('catalog/_filter.html.twig') }}
+                        </aside>
+                        <div class="medium-12 large-9 cell">
+                            <div class="grid-container">
+                                <div class="small-12 medium-6 large-4 cell">
+                                    <div id="goods" class="grid-x grid-padding-x grid-padding-y">
+                                        {% for bookCopy in booksCopy %}
+                                            <div class="small-12 medium-6 large-4 cell">
+                                                <img src="/{{ bookCopy.imagePath }}" alt="book image">
+                                                <h5>
+                                                    <a href="{{ path('catalog_show', {'id': bookCopy.id}) }}">{{ bookCopy.book.name }}</a>
+                                                </h5>
+                                                <p>{{ bookCopy.book.description|length > 40 ? bookCopy.book.description|slice(0, 40) ~ '...' : bookCopy.book.description }}</p>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="small-12 cell">
+                                    {{ include('/catalog/_pagination.html.twig') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script id="pagination-template" type="text/template">
+            <% if (page > 1) { %>
+            <li data-page="1"><a href>В начало</a></li>
+            <li data-page="<%= page-1 %>"><a href>&lt;</a></li>
+            <% } %>
+
+            <% for (var i = 1; i <= countPages; i++) { %>
+            <li data-page="<%= i %>"
+            <% if (i == page) { %> class="activePage" <% } %>><a href><%= i %></a>
+            </li>
+            <% } %>
+
+            <% if (nextPage <= countPages) { %>
+            <li data-page="<%= nextPage %>"><a href>&gt;</a></li>
+            <li data-page="<%= countPages %>"><a href>В конец</a></li>
+            <% } %>
+        </script>
+        {% endblock %}
+        {% block footer %}
+            {% block javascripts %}
+                <script src="{{ asset('js/catalog.js') }}"></script>
+                <script src="{{ asset('js/app.js') }}"></script>
+            {% endblock %}
+        {% endblock %}
+

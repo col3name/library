@@ -1,0 +1,23 @@
+{% extends 'layout/security-layout.html.twig' %}
+
+{% block form %}
+    <div class="grid-container">
+        <div class="grid-x grid-padding-x grid-padding-y">
+            <div class="small-5 cell">
+                {% if error %}
+                    <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+
+                <p><a href="{{ path('register') }}">Регистрация</a></p>
+                <form action="{{ path('login') }}" method="post">
+                    <label for="username">Логин:</label>
+                    <input class="text-wrap" type="text" id="username" name="_username" value="{{ last_username }}"/>
+                    <label for="password">Пароль:</label>
+                    <input type="password" id="password" name="_password"/>
+                    <input type="hidden" name="_target_path" value="/main"/>
+                    <button class="button" type="submit">Войти</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

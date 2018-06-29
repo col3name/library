@@ -1,0 +1,24 @@
+<nav aria-label="You are here:" role="navigation">
+    <ul class="breadcrumbs">
+        <li><a href="{{ path('homepage') }}">Главная</a></li>
+        {% if section|length > 0 %}
+            <li>
+                {% if entity|length > 0 %}
+                <a href="{{ path(path, {'id': entityId}) }}">
+                    {% endif %}
+                    {{ section }}
+                    {% if entity|length > 0 %}
+                </a>
+                {% endif %}</li>
+        {% endif %}
+
+        {% if ditailedPage|length > 0 %}
+            <li class="disabled">{{ ditailedPage }}</li>
+        {% endif %}
+        {% if currentPage|length > 0 %}
+            <li>
+                <span class="show-for-sr">Current: </span> {{ currentPage }}
+            </li>
+        {% endif %}
+    </ul>
+</nav>

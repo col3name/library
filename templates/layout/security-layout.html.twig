@@ -1,0 +1,16 @@
+ <!DOCTYPE html>
+<html>
+<head lang="ru">
+    {% block head %}
+        <meta charset="utf-8">
+        <title>Booklibrary {% block title %}{% endblock %}</title>
+        {% block stylesheets %}
+            <link href="{{ asset('css/app.css') }}" rel="stylesheet"/>
+            <link href="{{ asset('css/foundation.css') }}" rel="stylesheet"/>
+        {% endblock %}
+    {% endblock %}
+</head>
+<body class="login-bg">
+{% block form %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,7 @@
+{% for bookCopy in books %}
+    <div class="small-offset-1 small-10 medium-offset-0 medium-4 large-3 cell">
+         {{ include('home/_book-card.html.twig') }}
+    </div>
+{% else %}
+    <p>Книги не найдены</p>
+{% endfor %}

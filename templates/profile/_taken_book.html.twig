@@ -1,0 +1,6 @@
+<img class="book-image" src="/{{ issuance.bookCopy.imagePath }}" alt="book image">
+<h5>
+    <a href="{{ path('catalog_show', {'id': issuance.bookCopy.book.id}) }}">{{ issuance.bookCopy.book.name }}</a>
+</h5>
+<time>Когда взял: {{ issuance.issueDate|date("m/d/Y") }}</time>
+<time>Крайний срок: {{ issuance.issueDate|date("m/d/Y") }}</time>

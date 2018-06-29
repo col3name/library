@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+{% block main %}
+    <div class="grid-container">
+        <div class="grid-x grid-padding-x grid-padding-y">
+            <div class="small-12 cell">
+                {{ include('profile/_breadcrumbs.html.twig', {
+                    'path': 'admin_page',
+                    'section': 'Админка',
+                    'entityId': '',
+                    'entity': '',
+                    'ditailedPage': '',
+                    'currentPage': ''}) }}
+            </div>
+            <div class="small-12 cell">
+                <a href="{{ path('admin_show_book') }}">Администрирвоание книг</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
