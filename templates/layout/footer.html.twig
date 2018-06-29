@@ -1,7 +1,14 @@
-<footer class="grid-container">
+<footer class="footer">
+    <div class="grid-container">
     <div class="grid-x grid-padding-x">
+        <hr>
         <div class="large-12 cell">
-            <p>© copyright {{ "now"|date("Y") }}</p>
+            <ul class="menu simple">
+                <li><a href="{{ path('homepage') }}">Главная</a></li>
+                <li><a href="{{ path('catalog_page') }}">Каталог</a></li>
+            </ul>
         </div>
     </div>
+</div>
+    <div id="click" class="smoothScroll"><i class="fi-arrow-up"></i></div>
 </footer>

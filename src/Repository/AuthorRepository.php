@@ -7,6 +7,10 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
 
+/**
+ * Class AuthorRepository
+ * @package App\Repository
+ */
 class AuthorRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -24,6 +28,10 @@ class AuthorRepository extends ServiceEntityRepository
         return $entityManager->createQueryBuilder();
     }
 
+    /**
+     * @param int $authorId
+     * @return mixed
+     */
     public function findById(int $authorId)
     {
         $builder = $this->getQueryBuilder();
@@ -36,6 +44,9 @@ class AuthorRepository extends ServiceEntityRepository
             ->execute();
     }
 
+    /**
+     * @return mixed
+     */
     public function findAllBooks()
     {
         $builder = $this->getQueryBuilder();

@@ -10,6 +10,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ImageUploadListener
 {
+    /**
+     * @var FileUploader
+     */
     private $uploader;
 
     /**

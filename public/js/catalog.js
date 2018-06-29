@@ -3,7 +3,7 @@
 //     let ui = {
 //         categoryBtn: $('.js-category'),
 //         limit: $('#pages-limit'),
-//         pag: $('#pagination'),
+//         pagination: $('#pagination'),
 //         $goods: $('#goods'),
 //         goodsInfo: $('#goods-info')
 //     };
@@ -27,7 +27,7 @@
 //     function _bindHandlers() {
 //         ui.categoryBtn.on('click', _changeCategory);
 //         ui.limit.on('change', _changeLimit);
-//         ui.pag.on('click', 'a', _changePage);
+//         ui.pagination.on('click', 'a', _changePage);
 //     }
 //
 //     // Смена категории
@@ -54,7 +54,7 @@
 //         e.stopPropagation();
 //
 //         let $page = $(e.target).closest('li');
-//         ui.pag.find('li').removeClass('active');
+//         ui.pagination.find('li').removeClass('active');
 //         $page.addClass('active');
 //
 //         _getData();
@@ -63,7 +63,7 @@
 //     // Получение опций-настроек для товаров
 //     function _getOptions(resetPage) {
 //         let categoryId = +$('.js-category.active').attr('data-category'),
-//             page = !resetPage ? +ui.pag.find('li.active').attr('data-page') : 1,
+//             page = !resetPage ? +ui.pagination.find('li.active').attr('data-page') : 1,
 //             limit = +ui.limit.val();
 //
 //         return {
@@ -141,7 +141,7 @@
 //     //     ui.goodsInfo.text(goodsInfoMsg);
 //     //
 //     //     // Рендер пагинации
-//     //     ui.pag.html(pagTemplate({
+//     //     ui.pagination.html(pagTemplate({
 //     //         page: page,
 //     //         countPages: countPages
 //     //     }));

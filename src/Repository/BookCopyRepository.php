@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\BookCopy;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
@@ -12,25 +13,61 @@ use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use function Sodium\library_version_minor;
 
+/**
+ * Class BookCopyRepository
+ * @package App\Repository
+ */
 class BookCopyRepository extends ServiceEntityRepository
 {
+    /**
+     * BookCopyRepository constructor.
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, BookCopy::class);
     }
 
+    /**
+     * @param string $query
+     * @return string
+     */
     private function sanitizeSearchQuery(string $query): string
     {
         return trim(preg_replace('/[[:space:]]+/', ' ', $query));
     }
 
+    /**
+     * @param $bookCopyId
+     * @return array|mixed
+     */
+    public function countLike($bookCopyId)
+    {
+        $builder =  $this->getQueryBuilder();
+
+        return $builder
+            ->select('COUNT(user) AS countLike')
+            ->from('App:BookCopy', 'a')
+            ->leftJoin('a.userFavoritesBook', 'user')
+            ->where($builder->expr()->eq('a.id', ':bookCopyId'))
+            ->orderBy('countLike', 'DESC')
+            ->setParameter('bookCopyId', $bookCopyId)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param $search
+     * @param int $limit
+     * @return mixed
+     */
     public function findBySearch($search, $limit = BookCopy::MAX_COUNT)
     {
         $builder = $this->getQueryBuilder();
-        $trimedQuery = $this->sanitizeSearchQuery($search);
+        $trimmedQuery = $this->sanitizeSearchQuery($search);
 
         return $builder
-            ->setParameter('2', '%' . $trimedQuery . '%')
+            ->setParameter('2', '%' . $trimmedQuery . '%')
             ->select('bookCopy.id as bookCopyId')
             ->addSelect('bookCopy.imagePath')
             ->addSelect('book.name')
@@ -42,6 +79,11 @@ class BookCopyRepository extends ServiceEntityRepository
             ->execute();
     }
 
+    /**
+     * @param $genreId
+     * @param int $limit
+     * @return mixed
+     */
     public function findSimilarBooks($genreId, $limit = 5)
     {
         $qb = $this->getQueryBuilder();
@@ -59,6 +101,12 @@ class BookCopyRepository extends ServiceEntityRepository
             ->execute();
     }
 
+    /**
+     * @param int $page
+     * @param int $limit
+     * @param array|null $options
+     * @return mixed
+     */
     public function findForCatalog(int $page, int $limit = BookCopy::NUM_ITEMS, array $options = null)
     {
         $builder = $this->getQueryBuilder();
@@ -90,6 +138,10 @@ class BookCopyRepository extends ServiceEntityRepository
             ->execute();
     }
 
+    /**
+     * @param int $bookId
+     * @return mixed
+     */
     public function findGenreId(int $bookId)
     {
         $queryBuilder = $this->getQueryBuilder();
@@ -103,6 +155,9 @@ class BookCopyRepository extends ServiceEntityRepository
             ->execute();
     }
 
+    /**
+     * @return mixed
+     */
     public function countBookCopy()
     {
         $queryBuilder = $this->getQueryBuilder();
@@ -114,6 +169,10 @@ class BookCopyRepository extends ServiceEntityRepository
             ->execute();
     }
 
+    /**
+     * @param int $limit
+     * @return mixed
+     */
     public function findLatest($limit = BookCopy::MAX_COUNT)
     {
         $queryBuilder = $this->getQueryBuilder();
@@ -127,6 +186,10 @@ class BookCopyRepository extends ServiceEntityRepository
             ->execute();
     }
 
+    /**
+     * @param int $bookCopyId
+     * @return mixed
+     */
     public function averageRating(int $bookCopyId)
     {
         $queryBuilder = $this->getQueryBuilder();
@@ -160,6 +223,10 @@ class BookCopyRepository extends ServiceEntityRepository
             ->execute();
     }
 
+    /**
+     * @param int $bookCopyId
+     * @return mixed
+     */
     public function findAuthorsOfIssuance(int $bookCopyId)
     {
         $queryBuilder = $this->getQueryBuilder();
@@ -179,6 +246,10 @@ class BookCopyRepository extends ServiceEntityRepository
             ->execute();
     }
 
+    /**
+     * @param int $limit
+     * @return mixed
+     */
     public function findPopular($limit = BookCopy::MAX_COUNT)
     {
         $queryBuilder = $this->getQueryBuilder();
@@ -212,7 +283,7 @@ class BookCopyRepository extends ServiceEntityRepository
             ->leftJoin('issuance.bookCopy', 'bookCopy')
             ->leftJoin('bookCopy.book', 'book')
             ->where('bookCopy.id = :bookCopyId AND issuance.releaseDate IS NULL')
-            ->setParameter('bookCopyId', $bookCopyId) ;
+            ->setParameter('bookCopyId', $bookCopyId);
 
 //        $this->bookedBookCopy($builder, $bookCopyId);
 
@@ -221,6 +292,10 @@ class BookCopyRepository extends ServiceEntityRepository
             ->execute();
     }
 
+    /**
+     * @param $bookCopyId
+     * @return mixed
+     */
     public function whoHasBookCopy($bookCopyId)
     {
         $builder = $this->getQueryBuilder();
@@ -246,10 +321,19 @@ class BookCopyRepository extends ServiceEntityRepository
             ->execute();
     }
 
+    /**
+     * @param $getId
+     * @param $getId1
+     */
     public function userRateBook($getId, $getId1)
     {
     }
 
+    /**
+     * @param QueryBuilder $builder
+     * @param $bookCopyId
+     * @return QueryBuilder
+     */
     private function bookedBookCopy(QueryBuilder $builder, $bookCopyId)
     {
         $builder
@@ -257,9 +341,7 @@ class BookCopyRepository extends ServiceEntityRepository
             ->leftJoin('issuance.bookCopy', 'bookCopy')
             ->leftJoin('bookCopy.book', 'book')
             ->where('bookCopy.id = :bookCopyId AND issuance.releaseDate IS NULL')
-            ->setParameter('bookCopyId', $bookCopyId)
-
-        ;
+            ->setParameter('bookCopyId', $bookCopyId);
         return $builder;
     }
 

@@ -8,6 +8,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+/**
+ * Class SearchController
+ * @package App\Controller
+ */
 class SearchController extends Controller
 {
     /**
@@ -39,7 +43,6 @@ class SearchController extends Controller
     private function handleSearch(Request $request, BookCopyRepository $repository)
     {
         $search = $request->get('q') ?? '';
-        $foundBooks = $repository->findBySearch($search);
-        return $foundBooks;
+        return $repository->findBySearch($search);
     }
 }

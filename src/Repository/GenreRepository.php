@@ -7,6 +7,10 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
 
+/**
+ * Class GenreRepository
+ * @package App\Repository
+ */
 class GenreRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -24,6 +28,9 @@ class GenreRepository extends ServiceEntityRepository
         return $entityManager->createQueryBuilder();
     }
 
+    /**
+     * @return mixed
+     */
     public function findAllBooks()
     {
         $qb = $this->getQueryBuilder();

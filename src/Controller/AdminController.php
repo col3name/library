@@ -19,6 +19,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
+ * Class AdminController
+ * @package App\Controller
  * @Security("has_role('ROLE_ADMIN')")
  */
 class AdminController extends Controller

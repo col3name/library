@@ -11,6 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * Class Book
+ * @package App\Entity
  * @ORM\Entity
  * @ORM\Table(name="book")
  */
@@ -82,6 +84,14 @@ class Book
      */
     public $bookCopy;
 
+    /**
+     * Book constructor.
+     * @param string $name
+     * @param string $description
+     * @param string $isbn
+     * @param string $pageNumber
+     * @param string $publicationYear
+     */
     public function __construct($name = '', $description = '', $isbn = '', $pageNumber = '', $publicationYear = '')
     {
         $this->name = $name;
@@ -213,10 +223,16 @@ class Book
         return $this->authorsBook;
     }
 
+    /**
+     * @param \App\Entity\Author $author
+     */
     public function removeAuthorsBook(Author $author) {
         $this->authorsBook->removeElement($author);
     }
 
+    /**
+     * @param \App\Entity\Author $author
+     */
     public function addAuthorsBook(Author $author) {
         if ($this->isAuthorAlreadyAdded($author)) {
             return;
@@ -225,6 +241,10 @@ class Book
         $this->authorsBook[] = $author;
     }
 
+    /**
+     * @param \App\Entity\Author $author
+     * @return bool
+     */
     public function isAuthorAlreadyAdded(Author $author)
     {
         return $this->authorsBook->contains($author);

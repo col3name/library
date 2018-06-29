@@ -15,7 +15,9 @@
             {{ include('profile/_aside.html.twig', {'pageUser': user}) }}
 
             <div class="small-12 large-9  cell">
-                <h2 class="text-center">Книги у меня</h2>
+                <div class="small-12 cell">
+                    <h2>Книги у меня ({{ takenBooks|length }})</h2>
+                </div>
                 <div class="grid-container">
                     <div id="showBooks" class="grid-x grid-padding cell">
                         {% for takenBook in takenBooks %}
@@ -28,6 +30,7 @@
                                     <time>Когда взял: {{ takenBook.issueDate|date("m/d/Y    ") }}</time>
                                     <time>Крайний срок сдачи: {{ takenBook.deadlineDate|date("m/d/Y") }}</time>
                                 </div>
+                                <p id="showMessage" class="hide"></p>
                                 <input type="button" class="button" id="returnBook" value="Вернуть книгу"
                                        data-issuanceId="{{ takenBook.issuanceId }}"
                                 >

@@ -1,41 +1,40 @@
 {% block header %}
-    <div class="grid-container">
+    <header class="header"><div class="grid-container">
         <div class="grid-x grid-padding-x">
             <div class="large-12 cell">
-                <div class="top-bar">
-                    <div class="top-bar-left">
+                <span id="scrollTo"></span>
+                <ul class="top-bar">
+                    <li class="top-bar-left">
                         <ul class="dropdown menu" data-dropdown-menu>
                             <li><a href="{{ path('homepage') }}">Библиотека</a></li>
                             <li><a href="{{ path('catalog_page') }}">Каталог</a></li>
                             {% if (is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')) %}
-                                <li><a href="{{ path('logout') }}">выйти</a></li>
+                                <li><a href="{{ path('logout') }}">Выйти</a></li>
                             {% else %}
-                                <li><a href="{{ path('login') }}">войти</a></li>
+                                <li><a href="{{ path('login') }}">Войти</a></li>
                                 <li><a href="{{ path('register') }}">Регистрация</a></li>
                             {% endif %}
                             {% if is_granted('ROLE_ADMIN') %}
                                 <li><a href="{{ path('admin_page') }}">Админка</a></li>
                             {% endif %}
                         </ul>
-                    </div>
-                    <div class="top-bar-right">
+                    </li>
+                    <li class="top-bar-right">
                         <ul class="menu">
                             {% if app.request.attributes.get('_route') != 'ajax_search' %}
                                 {{ include('form/searchForm.html.twig') }}
                             {% endif %}
                         </ul>
-                    </div>
-                    <div class="top-bar-right">
+                    </li>
+                    <li class="top-bar-right">
                         {% if is_granted('ROLE_USER') %}
-                            <p>
                                 <img class="header-user-icon" src="{{ app.user.avatar }}" alt="avatar">
                                 <a class="left"
                                    href="{{ path('profile_page', {'id': app.user.id}) }}">{{ app.user.username }}</a>
 
-                            </p>
                         {% endif %}
-                    </div>
-                </div>
+                    </li>
+                </ul>
             </div>
             {% if app.request.attributes.get('_route') != 'ajax_search' %}
                 <ul class="nav" id="side-menu">
@@ -46,5 +45,5 @@
                 </ul>
             {% endif %}
         </div>
-    </div>
+    </div></header>
 {% endblock %}

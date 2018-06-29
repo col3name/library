@@ -7,6 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Class PublishingHouse
+ * @package App\Entity
+ * Class PublishingHouse
  * @ORM\Entity()
  * @ORM\Table(name="publishing_house")
  */

@@ -44,13 +44,13 @@ class CatalogController extends Controller
     {
         $page = $request->get('page') ?? 1;
         $limit = $request->get('limit') ?? BookCopy::NUM_ITEMS;
-        $options = $this->parseFilterOptions($request);
 
         if ($request->isXmlHttpRequest()) {
+            $options = $this->parseFilterOptions($request);
             $result = $this->getData($bookCopyRepository, $page, $limit, $options);
-
             return $this->json($result);
         }
+        $options = $this->parseFilterOptions($request);
 
         $parameters = $this->getCatalogPageParameters($bookCopyRepository, $genreRepository, $authorRepository, $page, $limit, $options);
         return $this->render('catalog/index.html.twig', $parameters);
@@ -77,30 +77,47 @@ class CatalogController extends Controller
      */
     public function show(BookCopy $bookCopy, BookCopyRepository $bookCopyRepository)
     {
-        $user = $this->getUser();
-        $parameters = $this->genereteShowPageParameter($bookCopy, $bookCopyRepository, $user);
-
+        $userId = $this->getUserId();
+        $parameters = $this->generateShowPageParameter($bookCopy, $bookCopyRepository, $userId);
         return $this->render('catalog/show.html.twig', $parameters);
     }
 
     /**
      * @param Request $request
+     * @param BookCopyRepository $bookCopyRepository
      * @param BookCopy $bookCopy
      * @return JsonResponse|\Symfony\Component\HttpFoundation\RedirectResponse
      * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
      * @Route("/{id}/take-book", requirements={"\d+"}, name="takeBook" )
      */
-    public function takeBook(Request $request, BookCopy $bookCopy)
+    public function takeBook(Request $request, BookCopyRepository $bookCopyRepository, BookCopy $bookCopy)
     {
         if ($request->isXmlHttpRequest()) {
+            $existFreeBooks = $this->existFreeBooks($bookCopyRepository, $bookCopy);
             $user = $this->getUser();
+
+            $userHasThisBook = $this->userHasThisBook($bookCopyRepository, $user->getId(), $bookCopy);
+
+            if (!$existFreeBooks || $userHasThisBook) {
+                $result['result'] = 'success';
+
+                return $this->json($result);
+            }
+
             $issuance = $this->setNewIssuance($bookCopy, $user);
             $this->saveEntity($issuance);
+            $json['result']= 'good';
 
-            return $this->json(['result' => 'success']);
+            return $this->json($json);
         }
 
         return $this->redirectToRoute('catalog_page');
+    }
+
+    private function existFreeBooks(BookCopyRepository $bookCopyRepository, BookCopy $bookCopy) {
+        $bookCopyId = $bookCopy->getId();
+        $countFreeBooks = $this->getCountFreeBooks($bookCopyRepository, $bookCopyId);
+        return $countFreeBooks > 0;
     }
 
     /**
@@ -135,10 +152,10 @@ class CatalogController extends Controller
      * @Route("/{id}/favorite-book", requirements={"\d+"}, name="favorite_book")
      * @param Request $request
      * @param BookCopy $bookCopy
+     * @param BookCopyRepository $repository
      * @return Response
      */
-
-    public function addFavoritesBook(Request $request, BookCopy $bookCopy)
+    public function addFavoritesBook(Request $request, BookCopy $bookCopy, BookCopyRepository $repository)
     {
         if ($request->isXmlHttpRequest()) {
             /** @var User $user */
@@ -147,7 +164,9 @@ class CatalogController extends Controller
             $json = $this->handleLikeAction($bookCopy, $user);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
-
+            $bookCopyId = $bookCopy->getId();
+            $countLike = $repository->countLike($bookCopyId);
+            $json['countLike'] = $countLike['0']['countLike'];
             return $this->json($json);
         }
 
@@ -278,6 +297,7 @@ class CatalogController extends Controller
         if (!$books) {
             $result['entities']['error'] = "not found";
         } else {
+            $result['entities']['error'] = "";
             $result['entities'] = $this->getRealEntities($books);
             $result['countAll'] = $countAll;
             $result['countItem'] = $limit;
@@ -350,7 +370,7 @@ class CatalogController extends Controller
      * @param $bookCopyId
      * @return string
      */
-    private function getAvarage(BookCopyRepository $bookCopyRepository, $bookCopyId): string
+    private function getAverage(BookCopyRepository $bookCopyRepository, $bookCopyId): string
     {
         $averageRating = $bookCopyRepository->averageRating($bookCopyId);
 
@@ -358,40 +378,41 @@ class CatalogController extends Controller
     }
 
     /**
-     * @param $user
      * @return int
      */
-    private function getUserId(User $user): int
+    private function getUserId(): int
     {
+        $user = $this->getUser();
         return isset($user) ? $user->getId() : 0;
     }
 
     /**
      * @param BookCopy $bookCopy
      * @param BookCopyRepository $bookCopyRepository
-     * @param $user
+     * @param $userId
      * @return array
      */
-    private function genereteShowPageParameter(BookCopy $bookCopy, BookCopyRepository $bookCopyRepository, $user): array
+    private function generateShowPageParameter(BookCopy $bookCopy, BookCopyRepository $bookCopyRepository, $userId): array
     {
         $bookCopyId = $bookCopy->getId();
-        $userId = $this->getUserId($user);
 
-        $countFreeBooks = $bookCopyRepository->countFreeBooks($bookCopyId);
-        $average = $this->getAvarage($bookCopyRepository, $bookCopyId);
+        $existFreeBooks = $this->existFreeBooks($bookCopyRepository, $bookCopy);
+        $average = $this->getAverage($bookCopyRepository, $bookCopyId);
         $whoHasBooks = $bookCopyRepository->whoHasBookCopy($bookCopyId);
         $isUserHasBooks = $this->isExistField($userId, $whoHasBooks, 'readerId');
         $issuanceId = $this->findIssuanceId($whoHasBooks, $userId);
         $bookRated = $this->getBookedRated($bookCopyRepository, $bookCopyId, $userId);
+        $countLike = $bookCopyRepository->countLike($bookCopy->getId());
 
         return [
             'bookCopy' => $bookCopy,
-            'countFreeBooks' => $countFreeBooks,
+            'existFreeBooks' => $existFreeBooks,
             'average' => $average,
             'whoHasBooks' => $whoHasBooks,
             'isUserHasBooks' => $isUserHasBooks,
             'issuanceId' => $issuanceId,
             'bookRated' => $bookRated,
+            'countLike' => $countLike
         ];
     }
 
@@ -423,11 +444,11 @@ class CatalogController extends Controller
      */
     private function parseFilterOptions(Request $request)
     {
-        $options =[];
+        $options = [];
         $options['genreId'] = $request->get('genreId');
         $options['authorId'] = $request->get('authorId');
         $options['sortField'] = $request->get('sortField');
-        $options['orderBy'] = $request->get('orderBy') ?? 'ASC';
+        $options['orderBy'] = $request->get('orderBy');
         return $options;
     }
 
@@ -478,7 +499,7 @@ class CatalogController extends Controller
      */
     private function generateDownloadFileName(BookCopy $bookCopy, $extension): string
     {
-        return $bookCopy->getBook()->getName() . '.'. $extension;
+        return $bookCopy->getBook()->getName() . '.' . $extension;
     }
 
     /**
@@ -523,5 +544,34 @@ class CatalogController extends Controller
         $rating->setRating($score);
 
         return $rating;
+    }
+
+    /**
+     * @param BookCopyRepository $bookCopyRepository
+     * @param int $bookCopyId
+     * @return int
+     */
+    private function getCountFreeBooks(BookCopyRepository $bookCopyRepository, int $bookCopyId): int
+    {
+        $countFreeBooks = $bookCopyRepository->countFreeBooks($bookCopyId);
+
+        $item = $countFreeBooks['0'];
+        if (!isset($item)) {
+            return 0;
+        }
+
+        return isset($item['countFreeBooks']) ? $item['countFreeBooks'] + 1 : 0;
+    }
+
+    /**
+     * @param BookCopyRepository $bookCopyRepository
+     * @param $userId
+     * @param $bookCopyId
+     * @return false|int|string
+     */
+    private function userHasThisBook(BookCopyRepository $bookCopyRepository, $userId, $bookCopyId)
+    {
+        $whoHasBooks = $bookCopyRepository->whoHasBookCopy($bookCopyId);
+        return $this->isExistField($userId, $whoHasBooks, 'readerId');
     }
 }

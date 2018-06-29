@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * Class Issuance
+ * @package App\Entity
  * @ORM\Entity
  * @ORM\Table(name="issuance")
  */

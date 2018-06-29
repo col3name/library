@@ -2,7 +2,11 @@
 <div>
     {% if is_granted('ROLE_USER') %}
         <a href="{{ path('liked_books') }}">Избранные</a>
-        <span id="like" data-bookCopyId="{{ bookCopy.id }}"><i class="fi-heart fi-list-size like"></i></span>
+        <span id="like" data-bookCopyId="{{ bookCopy.id }}"><i class="fi-heart fi-list-size like"></i><span
+                    id="countLike">{% for like in countLike %}
+                {{ like.countLike }}
+            {% endfor %}</span>
+            </span>
         {% if bookRated == false %}
             <span id="bookRating"></span>
         {% endif %}
@@ -31,5 +35,26 @@
     </p>
 {% endif %}
 {% if bookCopy.filePath|length > 4 %}
-    <p><a href="{{ path('download_book_file', { 'id': bookCopy.id }) }}"><span><i class="fi-list-size fi-download"></i> Скачать pdf</span></a></p>
+    <p><a href="{{ path('download_book_file', { 'id': bookCopy.id }) }}"><span><i class="fi-list-size fi-download"></i> Скачать pdf</span></a>
+    </p>
+{% endif %}
+{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+    {% if is_granted('ROLE_USER') %}
+        <p id="showMessage" class="hide"></p>
+        {% if existFreeBooks and isUserHasBooks != true %}
+            <input type="button" class="button" id="takenBook" value="Взять книгу"
+                   data-bookCopyId="{{ bookCopy.id }}">
+        {% endif %}
+        {% if not existFreeBooks %}
+            <p>не свободных книг</p>
+        {% endif %}
+        {% if isUserHasBooks %}
+            <input type="button" class="button" id="returnBook" value="Вернуть книгу"
+                   data-issuanceId="{{ issuanceId }}"
+            >
+        {% endif %}
+    {% endif %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <a class="button" href="{{ path('book_edit', {'id': bookCopy.Id }) }}">Редактировать</a>
+    {% endif %}
 {% endif %}

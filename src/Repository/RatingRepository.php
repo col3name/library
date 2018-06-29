@@ -7,6 +7,10 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
 
+/**
+ * Class RatingRepository
+ * @package App\Repository
+ */
 class RatingRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

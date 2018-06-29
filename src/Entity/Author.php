@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Class Author
+ * @package App\Entity
  * @ORM\Entity()
  * @ORM\Table(name="author")
  */

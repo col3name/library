@@ -275,7 +275,7 @@ class ProfileController extends Controller
         $now = new \DateTime();
         $issuance->setReleaseDate($now);
         $entityManager = $this->getDoctrine()->getManager();
-        $result = [];
+        $result['error'] = false;
 
         try {
             $entityManager->flush();

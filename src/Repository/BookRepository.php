@@ -5,11 +5,12 @@ namespace App\Repository;
 use App\Entity\Book;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-//use Pagerfanta\Pagerfanta;
-//use Pagerfanta\Adapter\DoctrineORMAdapter;
 
+/**
+ * Class BookRepository
+ * @package App\Repository
+ */
 class BookRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -27,6 +28,11 @@ class BookRepository extends ServiceEntityRepository
         return $entityManager->createQueryBuilder();
     }
 
+    /**
+     * @param $search
+     * @param int $limit
+     * @return mixed
+     */
     public function findBySearch($search, $limit = 5)
     {
         $qb = $this->getQueryBuilder();
@@ -42,6 +48,10 @@ class BookRepository extends ServiceEntityRepository
             ;
     }
 
+    /**
+     * @param $genreId
+     * @return mixed
+     */
     public function findByGenre($genreId) {
         $builder = $this->getQueryBuilder();
 
@@ -54,6 +64,10 @@ class BookRepository extends ServiceEntityRepository
             ;
     }
 
+    /**
+     * @param $bookCopyId
+     * @return mixed
+     */
     public function getLikeInfo($bookCopyId) {
         $builder = $this->getQueryBuilder();
 

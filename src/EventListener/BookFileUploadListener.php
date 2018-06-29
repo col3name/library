@@ -8,8 +8,15 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+/**
+ * Class BookFileUploadListener
+ * @package App\EventListener
+ */
 class BookFileUploadListener
 {
+    /**
+     * @var FileUploader
+     */
     private $uploader;
 
     /**

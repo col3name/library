@@ -51,9 +51,9 @@ class User implements UserInterface, \Serializable
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(message="Please, upload the book upload")
      * @Assert\Image(
-     *     minWidth = 200,
+     *     minWidth = 150,
      *     maxWidth = 1920,
-     *     minHeight = 300,
+     *     minHeight = 150,
      *     maxHeight = 1920
      * )
      */
@@ -76,6 +76,7 @@ class User implements UserInterface, \Serializable
     private $rateAuthored;
 
     /**
+     * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="Comment", mappedBy="author")
      */
     private $commentsAuthored;
@@ -98,6 +99,13 @@ class User implements UserInterface, \Serializable
     private $favoritesBookCopy;
 
     /**
+     * @var ArrayCollection
+     * @ORM\ManyToMany(targetEntity="BookCopy", inversedBy="userReadedBookCopy")
+     * @ORM\JoinTable(name='readed_book_copy")
+     */
+    private $readedBookCopy;
+
+    /**
      * @return mixed
      */
     public function getFavoritesComment()
@@ -113,6 +121,9 @@ class User implements UserInterface, \Serializable
         $this->favoritesComment = $favoritesComment;
     }
 
+    /**
+     * @param BookCopy $bookCopy
+     */
     public function addFavoritesBookCopy(BookCopy $bookCopy) {
         if ($this->bookCopyLiked($bookCopy)) {
             return;
@@ -121,13 +132,48 @@ class User implements UserInterface, \Serializable
         $this->favoritesBookCopy[] = $bookCopy;
     }
 
+    /**
+     * @param BookCopy $bookCopy
+     */
     public function removeFavoritesBookCopy(BookCopy $bookCopy) {
         $this->favoritesBookCopy->removeElement($bookCopy);
     }
 
+    /**
+     * @param BookCopy $bookCopy
+     * @return bool
+     */
     public function bookCopyLiked(BookCopy $bookCopy)
     {
         return $this->favoritesBookCopy->contains($bookCopy);
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getReadedBookCopy(): ArrayCollection
+    {
+        return $this->readedBookCopy;
+    }
+
+    /**
+     * @param ArrayCollection $readedBookCopy
+     */
+    public function setReadedBookCopy(ArrayCollection $readedBookCopy): void
+    {
+        $this->readedBookCopy = $readedBookCopy;
+    }
+
+    public function addReadedBookCopy(BookCopy $bookCopy) {
+        if ($this->readedBookCopy->contains($bookCopy)) {
+            return;
+        }
+
+        $this->readedBookCopy[] = $bookCopy;
+    }
+
+    public function removeReadedBookCopy(BookCopy $bookCopy) {
+        $this->readedBookCopy->removeElement($bookCopy);
     }
 
     /**
@@ -139,6 +185,8 @@ class User implements UserInterface, \Serializable
         $this->isActive = true;
         $this->avatar = "/image/camera_200.png";
         $this->favoritesBookCopy = new ArrayCollection();
+        $this->commentsAuthored = new ArrayCollection();
+        $this->readedBookCopy = new ArrayCollection();
     }
 
     /**
@@ -187,6 +235,10 @@ class User implements UserInterface, \Serializable
     public function setCommentsAuthored($commentsAuthored): void
     {
         $this->commentsAuthored = $commentsAuthored;
+    }
+
+    public function countCommentsAuthored() {
+        return $this->commentsAuthored->count();
     }
 
     /**

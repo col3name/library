@@ -4,6 +4,10 @@ namespace App\Service;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+/**
+ * Class FileUploader
+ * @package App\Service
+ */
 class FileUploader
 {
     private $targetDirectory;
@@ -17,6 +21,10 @@ class FileUploader
         $this->targetDirectory = $targetDirectory;
     }
 
+    /**
+     * @param UploadedFile $file
+     * @return string
+     */
     public function upload(UploadedFile $file) {
         $fileName = $this->generateFileName($file);
 

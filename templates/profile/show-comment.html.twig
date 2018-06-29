@@ -14,10 +14,11 @@
             </div>
 
             <div class="small-12 cell">
-                <h2>Ваши отзывы</h2>
+                <h2>Ваши отзывы ({{ user.commentsAuthored|length }})</h2>
             </div>
             <div class="small-12 cell">
                 {{ include('catalog/_comment-show.html.twig', {
+                    'profilePage' : 'true',
                     'comments': user.commentsAuthored,
                     'nullMessage': 'Пока нет отзывов'}) }}
             </div>

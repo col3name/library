@@ -12,6 +12,10 @@ use Doctrine\ORM\QueryBuilder;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 
+/**
+ * Class UserRepository
+ * @package App\Repository
+ */
 class UserRepository extends ServiceEntityRepository
 {
     /**
@@ -48,6 +52,12 @@ class UserRepository extends ServiceEntityRepository
             ->execute();
     }
 
+    /**
+     * @param $readerId
+     * @param int $page
+     * @param int $limit
+     * @return mixed
+     */
     public function findTakenBook($readerId, $page = 1, $limit = 5) {
         $builder = $this->getQueryBuilder();
         $offset = $page * $limit - $limit + 1;

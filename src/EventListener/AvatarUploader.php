@@ -8,6 +8,10 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+/**
+ * Class AvatarUploader
+ * @package App\EventListener
+ */
 class AvatarUploader
 {
     private $uploader;

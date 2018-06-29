@@ -11,6 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * Class BookCopy
+ * @package App\Entity
  * @ORM\Entity
  * @ORM\Table(name="bookCopy")
  */
@@ -82,6 +84,12 @@ class BookCopy
     private $userFavoritesBook;
 
     /**
+     * @var ArrayCollection
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="readedBookCopy")
+     */
+    private $userReadedBookCopy;
+
+    /**
      * @ORM\OneToMany(targetEntity="Rating", mappedBy="bookCopy")
      */
     private $rates;
@@ -103,11 +111,15 @@ class BookCopy
      */
     private $userFavorites;
 
+    /**
+     * BookCopy constructor.
+     */
     public function __construct()
     {
         $this->uploadDate = new \DateTime();
         $this->comments = new ArrayCollection();
         $this->userFavoritesBook = new ArrayCollection();
+        $this->userReadedBookCopy = new ArrayCollection();
     }
 
     /**
@@ -223,6 +235,23 @@ class BookCopy
     }
 
     /**
+     * @return ArrayCollection
+     */
+    public function getUserReadedBookCopy(): ArrayCollection
+    {
+        return $this->userReadedBookCopy;
+    }
+
+    /**
+     * @param ArrayCollection $userReadedBookCopy
+     */
+    public function setUserReadedBookCopy(ArrayCollection $userReadedBookCopy): void
+    {
+        $this->userReadedBookCopy = $userReadedBookCopy;
+    }
+
+
+    /**
      * @return \DateTime
      */
     public function getUploadDate(): \DateTime
@@ -322,7 +351,7 @@ class BookCopy
 //        $bookAuthor->setBooks(null);
 //        $this->authors->removeElement($bookAuthor);
 //    }
-
+//
 //    /**
 //     * @return mixed
 //     */

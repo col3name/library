@@ -1,5 +1,27 @@
 'use strict';
 
+class Scroll {
+    constructor(from, to, timeOut) {
+        this.from = $(from);
+        this.to = $(to);
+        this.timeOut = timeOut;
+    }
+
+    scroll() {
+        let self = this;
+        this.from.click(function () {
+            $('html, body').animate({
+                scrollTop: self.to.offset().top
+            }, self.timeOut);
+        })
+    }
+}
+
+$(document).ready(function () {
+    let scroll = new Scroll('#click', '#scrollTo', 100);
+    scroll.scroll();
+});
+
 class Search {
     constructor(search, entitySelector) {
         this.search = $(search);
@@ -11,14 +33,18 @@ class Search {
         let path = window.location.pathname;
         console.log(path);
         if (path !== '/search') {
-            self.search.focus(function () {
+            let showSearchResult = function () {
                 self.entitySelector.addClass('search-active');
                 self.entitySelector.removeClass('hide');
-            });
-            self.search.focusout(function () {
+            };
+            let hideSearchResult = function () {
                 self.entitySelector.removeClass('search-active');
                 self.entitySelector.addClass('hide')
-            });
+            };
+
+            self.search.focus(showSearchResult);
+            self.entitySelector.hover(showSearchResult);
+            self.search.focusout(hideSearchResult);
         }
         self.search.keyup(function () {
             let minlength = 3;
@@ -48,16 +74,23 @@ class Search {
     }
 
     _renderBooksLarge(response, entitySelector) {
+        function trimDescription(description, length) {
+            description = description.length > length ? description.substr(0, length) : description;
+            return description;
+        }
+
         $.each(response, function (key, arr) {
+            let description = trimDescription(arr['description'], 150);
+
             entitySelector.append('<div class="media-object">' +
                 '  <div class="media-object-section">' +
                 '    <div class="thumbnail">' +
-                '      <img class="small-image" src= "' + arr['imagePath'] + '">' +
+                '      <img class="small-image" class="small-image" src= "' + arr['imagePath'] + '">' +
                 '    </div>' +
                 '  </div>' +
                 '  <div class="media-object-section main-section">' +
                 '    <h4><a href="/catalog/' + arr['bookCopyId'] + '">' + arr['name'] + '</a></h4>\n' +
-                '    <p> ' + arr['description'] + '</p>\n' +
+                '    <p> ' + description + '</p>\n' +
                 '  </div>\n' +
                 '</div><li></li>');
         });
@@ -73,8 +106,9 @@ class Search {
 }
 
 class Like {
-    constructor(like) {
+    constructor(like, countLike) {
         this.like = $(like);
+        this.countLike = $(countLike);
         console.log(this.like);
     }
 
@@ -100,6 +134,8 @@ class Like {
             },
             success: function (response) {
                 console.log(response);
+                let countLike = $('#countLike');
+                countLike.text(response['countLike']);
             }
         })
     }
@@ -108,7 +144,7 @@ class Like {
 let catalogPag = (function ($) {
 
     let categoryBtn = $('.js-category');
-    let $limit = $('#pages-limit');
+    let limit = $('#pageLimit');
     let pagination = $('#pagination');
     let goods = $('#goods');
     let goodsInfo = $('#goods-info');
@@ -119,8 +155,8 @@ let catalogPag = (function ($) {
 
     let ui = {
         categoryBtn: categoryBtn,
-        limit: $limit,
-        pag: pagination,
+        limit: limit,
+        pagination: pagination,
         goods: goods,
         goodsInfo: goodsInfo,
         genreChoise: genreChoise,
@@ -146,7 +182,7 @@ let catalogPag = (function ($) {
         },
         showLarge: function (data) {
             return '<div class="small-12 medium-4 cell">' +
-                '<img src="/' + data.imagePath + '" alt="book image">' +
+                '<img class="small-image" src="/' + data.imagePath + '" alt="book image">' +
                 '<a href="/catalog/' + data.id + '"><h5>' + data.name + '</h5></a>' +
                 '<p>' + data.description + '</p>' +
                 '</div>';
@@ -166,7 +202,7 @@ let catalogPag = (function ($) {
         ui.genreChoise.on('change', _changeGetData);
         ui.authorChoise.on('change', _changeGetData);
         ui.sort.on('click', _changeGetData);
-        ui.pag.on('click', 'a', _changePage);
+        ui.pagination.on('click', 'a', _changePage);
         ui.reset.on('click', _changeReset);
     }
 
@@ -186,7 +222,7 @@ let catalogPag = (function ($) {
 
     function _changeReset() {
         $('#sort').val("withoutSort");
-        $('#pages-limit').val("4");
+        $('#pageLimit').val("3");
         $('#genreChoise').val("all");
         $('#authorChoise').val("all");
 
@@ -198,7 +234,7 @@ let catalogPag = (function ($) {
         e.stopPropagation();
 
         let $page = $(e.target).closest('li');
-        ui.pag.find('li').removeClass('active');
+        ui.pagination.find('li').removeClass('active');
         $page.addClass('active');
 
         _getData();
@@ -210,7 +246,7 @@ let catalogPag = (function ($) {
     }
 
     function _getOptions(resetPage) {
-        let page = !resetPage ? ui.pag.find('li.active').attr('data-page') : 1;
+        let page = !resetPage ? ui.pagination.find('li.active').attr('data-page') : 1;
         let limit = ui.limit.val();
         let genreId = ui.genreChoise.val();
         let authorId = ui.authorChoise.val();
@@ -240,14 +276,21 @@ let catalogPag = (function ($) {
             dataType: 'json',
             success: function (response) {
                 console.log(response);
+                if (response.entities.error === 'not found') {
+                    ui.goods.html('');
+                    ui.pagination.html('');
+                    ui.goods.append('<p>не найдено</p>')
+                } else {
+                    let optionsRenderPagiation = {
+                        page: options.page,
+                        limit: options.limit,
+                        countAll: (response.countAll == null) ? 0 : response.countAll['0']['1'],
+                        countItems: response.countItem
+                    };
 
-                _renderCatalog(response.entities, showType);
-                _renderPagination({
-                    page: options.page,
-                    limit: options.limit,
-                    countAll: (response.countAll == null) ? 0 : response.countAll['0']['1'],
-                    countItems: response.countItem
-                });
+                    _renderCatalog(response.entities, showType);
+                    _renderPagination(optionsRenderPagiation);
+                }
             }
         });
     }
@@ -262,8 +305,7 @@ let catalogPag = (function ($) {
     }
 
     function _renderCatalog(goods, showType) {
-        let parentTag = $("#goods").html('');
-
+        let parentTag = ui.goods.html('');
         $.each(goods, function (id, arr) {
             let data = {
                 id: id,
@@ -271,7 +313,6 @@ let catalogPag = (function ($) {
                 imagePath: arr['imagePath'],
                 description: parseDescription(arr),
             };
-
             parentTag.append(template.showLarge(data));
         });
     }
@@ -292,7 +333,7 @@ let catalogPag = (function ($) {
         let goodsInfoMsg = start + ' - ' + end + ' из ' + countAll;
         ui.goodsInfo.text(goodsInfoMsg);
 
-        ui.pag.html(pagTemplate({
+        ui.pagination.html(pagTemplate({
             page: page,
             countPages: countPages,
             nextPage: nextPage
@@ -308,11 +349,11 @@ let issuance = (function ($) {
     let ui = {
         takenBook: $("#takenBook"),
         returnBook: $("#returnBook"),
+        showMessage: $('#showMessage')
     };
 
     function init() {
         console.log('returnBook', ui.returnBook);
-        // _getData();
         _bindHandlers()
     }
 
@@ -338,12 +379,16 @@ let issuance = (function ($) {
 
         console.log(bookCopyId);
         let success = function (response) {
-            console.log('good');
+            console.log('good', response);
             ui.takenBook.remove();
+            ui.showMessage().text()
         };
 
         let error = function (response) {
             console.log('err', response);
+            ui.takenBook.remove();
+            ui.showMessage.text('Успешно');
+            ui.showMessage.removeClass('hide');
         };
 
         _getData(url, success, error);
@@ -354,13 +399,23 @@ let issuance = (function ($) {
         console.log(issuanceId);
         let url = '/profile/return-book/' + issuanceId;
 
-        let success = function (response) {
-            console.log('good');
-            ui.returnBook.remove();
+        ui.showMessage.html('hello');
 
+        let success = function (response) {
+            console.log('good', response['error']);
+            let error = response['error'];
+            if (!error) {
+                ui.returnBook.remove();
+            }
+
+            let msg = error ? 'Не удалось вернуть' : 'успешно';
+            ui.showMessage.removeClass('hide');
+            ui.showMessage.html(msg);
         };
         let error = function (response) {
             console.log('err', response);
+            ui.showMessage.html('Не удалось вернуть книгу');
+            ui.showMessage.removeClass('hide');
         };
 
         _getData(url, success, error);
@@ -400,6 +455,7 @@ class ShowMore {
             url: url,
             data: data,
             type: 'GET',
+            dataType: 'json',
             cache: false,
             success: function (response) {
                 self.renderResponse(response, takenBooks, showMore);
@@ -437,7 +493,7 @@ class ShowMore {
         let description = value['description'];
         description = (description.length > 70) ? description.substr(0, 70) + '...' : description;
         takenBooks.append('<div class="small-12 medium-6 large-4 cell">' +
-            '<img src="/' + value['imagePath'] + '" alt="">' +
+            '<img class="small" src="/' + value['imagePath'] + '" alt="">' +
             '<a href="/catalog/' + value['id'] + '">' + value['name'] + '</a>' +
             '<p>' + description + '</p></div>');
     }
@@ -487,14 +543,11 @@ class Rating {
 
 let app = (function ($) {
     function init() {
-        //
-        // $(document).foundation();
-        // $('#element').foundation('scrollToLoc', '#el');
         catalogPag.init();
         issuance.init();
         let showMore = new ShowMore('#showMore', '#showBooks');
         let rating = new Rating('#bookRating');
-        let like = new Like('#like');
+        let like = new Like('#like', '#countLike');
         let search = new Search('#search', '#entitiesNav');
 
         showMore.handle();
@@ -508,7 +561,6 @@ let app = (function ($) {
     }
 })(jQuery);
 
-let $body = $('body');
 jQuery(document).ready(app.init);
 
 
