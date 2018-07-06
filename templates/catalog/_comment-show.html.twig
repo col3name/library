@@ -1,32 +1,36 @@
 {% block comment %}
-    <hr>
     {% for comment in comments %}
         <div class="media-object">
-            {% if profilePage == 'true' %}
-                <div class="media-object-section">
-                    <div class="thumbnail"><img class="small-image"
-                                                src="/{{ comment.bookCopy.imagePath }}">
-                    </div>
-                </div>
-            {% endif %}
+            <div class="media-object-section">
+                <span class="small"> {{ comment.author.username }}:</span>
 
-            <div class="media-object-section main-section">
                 {% if profilePage == 'true' %}
-                    <h4>
-                        <a href="{{ path('catalog_show', {'id': comment.bookCopy.id}) }}">
-                            {{ comment.bookCopy.book.name }}
-                        </a>
-                    </h4>
+                    <img class="sm-image" src="/{{ comment.bookCopy.imagePath }}">
                 {% endif %}
-                {% if is_granted('ROLE_USER') %}
-                    <a class="small" href="{{ path('profile_page', {'id': comment.author.id}) }}">
-                        {{ comment.author.username }}
-                    </a>
-                {% else %}
-                    <span class="">Админ</span>
-                {% endif %}
-                <p>{{ comment.text|length > 40 ? comment.text|slice(0, 40) ~ '...' : comment.text }}</p>
-                <time>{{ comment.date|date("d M Y h:m", "Europe/Paris")|trans }}</time>
+                <p class="main-section-content">
+                    <time>{{ comment.date|date("d M Y h:m", "Europe/Paris")|trans }}</time>
+                </p>
+            </div>
+            <div class="media-object-section main-section">
+                <h6 class="main-section-title">
+                    {% if profilePage == 'true' %}
+                        <h4>
+                            <a href="{{ path('catalog_show', {'id': comment.bookCopy.id}) }}">
+                                {{ comment.bookCopy.book.name }}
+                            </a>
+                        </h4>
+                    {% endif %}
+                </h6>
+                <p>{% if is_granted('ROLE_USER') %}
+                        {#{% if profilePage == 'true' %}#}
+                            {#<span class="small"> {{ comment.author.username }}:</span>#}
+                        {#{% endif %}#}
+                    {% else %}
+                        <span class="">Админ</span>
+                    {% endif %}
+                    <span>"{{ comment.text|length > 40 ? comment.text|slice(0, 40) ~ '...' : comment.text }}
+                        "</span>
+                </p>
             </div>
         </div>
     {% else %}

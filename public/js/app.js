@@ -1,5 +1,110 @@
 'use strict';
 
+$(document).foundation();
+// $('[data-open="exampleModal11"]').on('click', function() {
+//     $('#exampleModal11').foundation('toggle');
+// });
+
+class DropDown {
+    constructor(mapped) {
+        this.mapped = mapped;
+        this.dropdownContainer = $('[data-dropdown-container="' + mapped + '"]');
+        this.dropdownBtn = $('[data-dropdown-button="' + mapped + '"]');
+        this.dropdownList = $('[data-dropdown-list="' + mapped + '"]');
+        this.quantity = $('[data-dropdown-quantity="' + mapped + '"]');
+        this.action = $('[data-dropdown-action="' + mapped + '"]');
+    }
+
+    _handle() {
+        let self = this;
+
+        this.dropdownContainer
+            .on('click', '[data-dropdown-button="' + self.mapped + '"]', function (e) {
+                if (self.dropdownList.hasClass('hidden')) {
+                    self.action.removeClass('fi-plus');
+                    self.action.addClass('fi-minus');
+                    self.dropdownList.removeClass('hidden');
+                    setTimeout(function () {
+                        self.dropdownList.removeClass('visuallyHidden');
+                    }, 100);
+                } else {
+                    self.action.removeClass('fi-minus');
+                    self.action.addClass('fi-plus');
+                    self.dropdownList.addClass('visuallyHidden');
+                    self.dropdownList.one('transitionend', function (e) {
+                        self.dropdownList.addClass('hidden');
+                    });
+                }
+            })
+            .on('input', '[data-dropdown-search="' + self.mapped + '"]', self._inputHandle)
+            .on('change', '[type="checkbox"]', this._changeHandler);
+    }
+
+    _inputHandle() {
+        let target = $(this);
+        let search = target.val().toLowerCase();
+
+        let $li = $('li.choices-item');
+        if (!search) {
+            $li.show();
+            return false;
+        }
+
+        $li.each(function () {
+            let text = $(this).text().toLowerCase();
+            let match = text.indexOf(search) > -1;
+            $(this).toggle(match);
+        });
+    }
+
+    _changeHandler() {
+        let numChecked = $('[type="checkbox"]:checked').length;
+        let quantity = $('.quantity');
+        quantity.text(numChecked || 'Любой');
+    }
+}
+
+let addTagButton = $('<button type="button" class="button add_tag_link">Add a tag</button>');
+let newLinkLi = $('<li></li>').append(addTagButton);
+
+jQuery(document).ready(function () {
+    let collectionHolder = $('ul.tags');
+    collectionHolder.append(newLinkLi);
+    collectionHolder.data('index', collectionHolder.find(':input').length);
+
+    collectionHolder.find('li').each(function () {
+        addTagFormDeleteLink($(this));
+    });
+
+    addTagButton.on('click', function (e) {
+        addTagForm(collectionHolder, newLinkLi);
+    });
+});
+
+function addTagFormDeleteLink(tagFormLi) {
+    let $removeFormButton = $('<button type="button" class="button">Delete this tag</button>');
+    tagFormLi.append($removeFormButton);
+
+    $removeFormButton.on('click', function (e) {
+        tagFormLi.remove();
+    });
+}
+
+function addTagForm(collectionHolder, newLinkLi) {
+    let prototype = collectionHolder.data('prototype');
+    console.log('prototype', prototype);
+    let index = collectionHolder.data('index');
+    if (index < 5) {
+        let newForm = prototype;
+        newForm = newForm.replace(/__name__/g, index);
+
+        collectionHolder.data('index', index + 1);
+
+        let $newFormLi = $('<li></li>').append(newForm);
+        newLinkLi.before($newFormLi);
+    }
+}
+
 class Scroll {
     constructor(from, to, timeOut) {
         this.from = $(from);
@@ -10,6 +115,7 @@ class Scroll {
     scroll() {
         let self = this;
         this.from.click(function () {
+            this.prevOffset = self.to.offset();
             $('html, body').animate({
                 scrollTop: self.to.offset().top
             }, self.timeOut);
@@ -17,21 +123,19 @@ class Scroll {
     }
 }
 
-$(document).ready(function () {
-    let scroll = new Scroll('#click', '#scrollTo', 100);
-    scroll.scroll();
-});
-
 class Search {
-    constructor(search, entitySelector) {
+    constructor(search, entitySelector, url, template) {
         this.search = $(search);
-        this.entitySelector = $(entitySelector).html('');
+        this.entitySelector = $(entitySelector);
+        console.log('this.entitySelector', this.entitySelector);
+        this.url = url;
+        this.template = template;
     }
 
     handle() {
         let self = this;
         let path = window.location.pathname;
-        console.log(path);
+
         if (path !== '/search') {
             let showSearchResult = function () {
                 self.entitySelector.addClass('search-active');
@@ -46,40 +150,45 @@ class Search {
             self.entitySelector.hover(showSearchResult);
             self.search.focusout(hideSearchResult);
         }
+
         self.search.keyup(function () {
-            let minlength = 3;
-            let that = this;
-            let value = $(this).val();
-            if (value.length >= minlength) {
+            self.entitySelector.empty();
+            const MIN_LENGTH = 3;
+            let value = self.search.val();
+
+            if (value.length >= MIN_LENGTH) {
+
                 $.ajax({
-                    url: '/search',
-                    data: {
-                        'q': value
-                    },
+                    url: self.url,
+                    data: {q: value},
                     type: 'GET',
                     cache: false,
                     dataType: 'json',
                     success: function (response) {
-                        let entitySelector = $("#entitiesNav").html('');
-                        let path = window.location.pathname;
-                        if (path === '/search') {
-                            self._renderBooksLarge(response, self.entitySelector);
-                        } else {
-                            self._renderBooksSmall(response, self.entitySelector);
-                        }
+                        self._renderTemplate(response)
                     }
                 });
             }
         });
     }
 
-    _renderBooksLarge(response, entitySelector) {
-        function trimDescription(description, length) {
-            description = description.length > length ? description.substr(0, length) : description;
-            return description;
-        }
-
+    _renderTemplate(response) {
+        let self = this;
+        self.entitySelector.empty();
         $.each(response, function (key, arr) {
+            self.template(arr, self.entitySelector);
+        });
+    }
+}
+
+const template = {
+    books: {
+        large: function (arr, entitySelector) {
+            function trimDescription(description, length) {
+                description = description.length > length ? description.substr(0, length) : description;
+                return description;
+            }
+
             let description = trimDescription(arr['description'], 150);
 
             entitySelector.append('<div class="media-object">' +
@@ -93,31 +202,32 @@ class Search {
                 '    <p> ' + description + '</p>\n' +
                 '  </div>\n' +
                 '</div><li></li>');
-        });
-    }
-
-    _renderBooksSmall(response, entitySelector) {
-        $.each(response, function (key, arr) {
-            let position = entitySelector.position();
-            console.log(position);
+        },
+        small: function (arr, entitySelector) {
+            console.log(entitySelector);
             entitySelector.append('<li><p><a href="/catalog/' + arr['bookCopyId'] + '">' + arr['name'] + '</a></p></li>');
-        });
-    }
-}
+        }
+    },
 
-class Like {
-    constructor(like, countLike) {
-        this.like = $(like);
+    tag: function (arr, entitySelector) {
+        for (let i = 0; i < arr.length; i++) {
+            entitySelector.append('<li><p>' + arr[i]['name'] + '</p></li>');
+        }
+    }
+};
+
+class Bookmark {
+    constructor(button, countLike, action) {
+        this.like = $(button);
         this.countLike = $(countLike);
-        console.log(this.like);
+        this.action = action;
     }
 
     handle() {
         let self = this;
-
         this.like.on('click', function () {
             let bookCopyId = self.like.attr('data-bookCopyId');
-            let url = '/catalog/' + bookCopyId + '/favorite-book';
+            let url = '/catalog/' + bookCopyId + self.action;
             self._getData(url);
         });
     }
@@ -133,7 +243,6 @@ class Like {
                 console.log('err', response);
             },
             success: function (response) {
-                console.log(response);
                 let countLike = $('#countLike');
                 countLike.text(response['countLike']);
             }
@@ -141,8 +250,7 @@ class Like {
     }
 }
 
-let catalogPag = (function ($) {
-
+let filter = (function ($) {
     let categoryBtn = $('.js-category');
     let limit = $('#pageLimit');
     let pagination = $('#pagination');
@@ -166,27 +274,19 @@ let catalogPag = (function ($) {
     };
 
     let template = {
-        showMedium: function (data) {
-            return '<div class="small-12 cell">' +
-                '<div class="media-object-section">' +
-                '<div class="thumbnail">' +
-                '<img src="/' + data.imagePath + '" alt="book image">' +
-                '</div>' +
-                '</div>' +
-                '<div class="media-object-section main-section">' +
-                '<a href="/catalog/' + data.id + '"><h5>' + data.name + '</h5></a>' +
-                '<p>\' + data.description + \'</p>' +
-                '</div>' +
-                '</div>'
-                ;
-        },
         showLarge: function (data) {
-            return '<div class="small-12 medium-4 cell">' +
-                '<img class="small-image" src="/' + data.imagePath + '" alt="book image">' +
-                '<a href="/catalog/' + data.id + '"><h5>' + data.name + '</h5></a>' +
-                '<p>' + data.description + '</p>' +
+            return '<div class="small-6 medium-4 cell">' +
+                '<div class="post-module">' +
+                '    <div class="thumbnail">' +
+                '        <img  src="/' + data.imagePath + '" alt="book image">' +
+                '    </div>' +
+                '    <div class="post-content">' +
+                '        <h3><a href="/catalog/' + data.id + '">' + data.name + '</a></h3>' +
+                '        <p class="description">' + data.description + '</p>\n' +
+                '    </div>' +
+                '    </div>' +
                 '</div>';
-        },
+        }
     };
 
     function init() {
@@ -208,13 +308,14 @@ let catalogPag = (function ($) {
 
     function _changeCategory(e) {
         let $category = $(e.target);
-        ui.categoryBtn.removeClass('active');
-        $category.addClass('active');
+        ui.categoryBtn.removeClass('pagination-active');
+        $category.addClass('pagination-active');
 
         _changeGetData();
     }
 
     function _changeGetData() {
+        console.log('change');
         _getData({
             resetPage: true
         });
@@ -222,7 +323,7 @@ let catalogPag = (function ($) {
 
     function _changeReset() {
         $('#sort').val("withoutSort");
-        $('#pageLimit').val("3");
+        $('#pageLimit').val("8");
         $('#genreChoise').val("all");
         $('#authorChoise').val("all");
 
@@ -234,8 +335,8 @@ let catalogPag = (function ($) {
         e.stopPropagation();
 
         let $page = $(e.target).closest('li');
-        ui.pagination.find('li').removeClass('active');
-        $page.addClass('active');
+        ui.pagination.find('li').removeClass('pagination-active');
+        $page.addClass('pagination-active');
 
         _getData();
     }
@@ -246,7 +347,7 @@ let catalogPag = (function ($) {
     }
 
     function _getOptions(resetPage) {
-        let page = !resetPage ? ui.pagination.find('li.active').attr('data-page') : 1;
+        let page = !resetPage ? ui.pagination.find('li.pagination-active').attr('data-page') : 1;
         let limit = ui.limit.val();
         let genreId = ui.genreChoise.val();
         let authorId = ui.authorChoise.val();
@@ -266,8 +367,8 @@ let catalogPag = (function ($) {
     function _getData(options) {
         let resetPage = options && options.resetPage;
         let showType = options && options.showType;
-
         options = _getOptions(resetPage);
+        console.log(options);
         $.ajax({
             url: '/catalog/',
             data: options,
@@ -492,8 +593,8 @@ class ShowMore {
     static renderBook(value, takenBooks) {
         let description = value['description'];
         description = (description.length > 70) ? description.substr(0, 70) + '...' : description;
-        takenBooks.append('<div class="small-12 medium-6 large-4 cell">' +
-            '<img class="small" src="/' + value['imagePath'] + '" alt="">' +
+        takenBooks.append('<div class="small-6 medium-4 large-3 cell">' +
+            '<img class="small-image" src="/' + value['imagePath'] + '" alt="">' +
             '<a href="/catalog/' + value['id'] + '">' + value['name'] + '</a>' +
             '<p>' + description + '</p></div>');
     }
@@ -541,19 +642,208 @@ class Rating {
     }
 }
 
+class Hamburger {
+    constructor(menu, menuBox) {
+        this.menu = $(menu);
+        this.menuBox = $(menuBox);
+    }
+
+    handle() {
+        let self = this;
+        this.menu.on('click', function () {
+            self.menu.toggleClass('active');
+            self.menuBox.toggleClass('show');
+            self.menuBox.toggleClass('active');
+        });
+    }
+}
+
+class Alert {
+    constructor($tag) {
+        this.tag = $tag;
+    }
+
+    _delete() {
+        let self = this;
+        self.tag.on('click', function () {
+            let parent = $(this).parent();
+            parent.remove();
+        });
+    }
+}
+
+class FileUploadPreview {
+    constructor(mapped) {
+        this.imageInput =  $('[data-upload-image="' + mapped + '"]');
+        console.log('this.imageInput', this.imageInput);
+        this.imageInput.append('<h1>imageInput</h1>')
+        this.showPreview = $('[data-show-preview="' + mapped + '"]');
+        console.log(this.showPreview);
+        this.showPreview.append('<h1>showPreview</h1>')
+    }
+
+    _showPreview() {
+        this.imageInput.change(function(){
+            readURL(this);
+        });
+    }
+
+    _readURL(input) {
+        let self = this;
+        if (input.files && input.files[0]) {
+            console.log('readUrl');
+
+            let reader = new FileReader();
+
+            reader.onload = function (e) {
+                input.showPreview.attr('src', e.target.result);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+}
+
+function readURLS(input) {
+    if (input.files && input.files[0]) {
+
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+            $('.image-upload-wrap').hide();
+
+            $('.file-upload-image').attr('src', e.target.result);
+            $('.file-upload-content').show();
+
+            $('.image-title').html(input.files[0].name);
+        };
+
+        reader.readAsDataURL(input.files[0]);
+
+    } else {
+        removeUpload();
+    }
+}
+
+function removeUpload() {
+    $('.file-upload-input').replaceWith($('.file-upload-input').clone());
+    $('.file-upload-content').hide();
+    $('.image-upload-wrap').show();
+}
+$('.image-upload-wrap').bind('dragover', function () {
+    $('.image-upload-wrap').addClass('image-dropping');
+});
+$('.image-upload-wrap').bind('dragleave', function () {
+    $('.image-upload-wrap').removeClass('image-dropping');
+});
+
+
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        let reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('[data-show-preview="avatar"]').attr('src', e.target.result);
+        };
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+$('[data-upload-image="avatar"]').change(function(){
+    readURL(this);
+});
+
+class DeleteAvatar {
+    constructor(deleteBtn) {
+        this.deleteBtn = $(deleteBtn);
+    }
+
+    _handle() {
+        let self = this;
+        this.deleteBtn.on('click', function() {
+            let id = self.deleteBtn.attr('data-user')
+
+            console.log('id', id);
+
+            $.ajax({
+                url: '/profile/' + id + '/delete-avatar',
+                data: {id: id},
+                type: 'POST',
+                cache: false,
+                dataType: 'json',
+                success: function (response) {
+                    console.log('response');
+                    // self._renderTemplate(response)
+                }
+            });
+        });
+    }
+}
+
+class Application {
+
+}
+
 let app = (function ($) {
     function init() {
-        catalogPag.init();
-        issuance.init();
-        let showMore = new ShowMore('#showMore', '#showBooks');
-        let rating = new Rating('#bookRating');
-        let like = new Like('#like', '#countLike');
-        let search = new Search('#search', '#entitiesNav');
 
+        let deleteAvatar = new DeleteAvatar('#deleteAvatar');
+        deleteAvatar._handle();
+
+        let avatarPreview = new FileUploadPreview('avatar');
+        avatarPreview._showPreview();
+
+        filter.init();
+        issuance.init();
+        let scroll = new Scroll('#click', '#scrollTo', 100);
+        scroll.scroll();
+
+        let showMore = new ShowMore('#showMore', '#showBooks');
         showMore.handle();
+
+        let rating = new Rating('#bookRating');
         rating.activate();
+
+        let like = new Bookmark('#like', '#countLike', '/favorite-book');
         like.handle();
+
+        let readedBook = new Bookmark('#readedBook', '#countLike', '/change-readed-book');
+        readedBook.handle();
+
+        let search = new Search('#search', '#entitiesNav', '/search', template.books.large);
         search.handle();
+
+        let headerSearch = new Search('#headerSearch', '#entitiesNav', '/search', template.books.small);
+        headerSearch.handle();
+
+        let tagSearch = new Search('#searchTag', '#searchTagResult', '/search-tag', template.tag);
+        tagSearch.handle();
+
+        let hamburger = new Hamburger('.menu2', '.menu-box');
+        hamburger.handle();
+
+        let tagDropDown = new DropDown("tag");
+        tagDropDown._handle();
+
+        let authorDropDown = new DropDown("authors");
+        authorDropDown._handle();
+
+        let authorsBookDropDown = new DropDown("authorsBook");
+        authorsBookDropDown._handle();
+
+        let genresBookDropDown = new DropDown("genresBook");
+        genresBookDropDown._handle();
+
+        let message = new Alert('button[data-dismiss="alert"]');
+        message._delete();
+    }
+
+    function deleteAlert($tag) {
+        $($tag).click(function () {
+            let parent = $(this).parent();
+            parent.remove();
+        });
     }
 
     return {
@@ -562,5 +852,3 @@ let app = (function ($) {
 })(jQuery);
 
 jQuery(document).ready(app.init);
-
-

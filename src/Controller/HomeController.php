@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Repository\BookCopyRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -29,7 +28,7 @@ class HomeController extends Controller
 
         return $this->render('home/index.html.twig', [
             'recentBooks' => $recentBooks,
-            'popularBooks' => $popularBooks
+            'popularBooks' => $popularBooks,
         ]);
     }
 }

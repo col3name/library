@@ -19,11 +19,11 @@ class SecurityController extends Controller
      */
     public function login(AuthenticationUtils $authenticationUtils)
     {
-        $lastUsernme = $authenticationUtils->getLastUsername();
+        $lastUsername = $authenticationUtils->getLastUsername();
         $error = $authenticationUtils->getLastAuthenticationError();
 
         return $this->render('security/login.html.twig', [
-            'last_username' => $lastUsernme,
+            'last_username' => $lastUsername,
             'error' => $error
         ]);
     }

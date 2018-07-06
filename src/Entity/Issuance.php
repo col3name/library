@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use App\Entity\User;
-use App\Entity\BookCopy;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 

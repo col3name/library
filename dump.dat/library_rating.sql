@@ -1,0 +1,14 @@
+INSERT INTO library.rating (id, author_id, book_copy_id, date, rating) VALUES (45, 3, 2, '2018-06-28 08:08:46', 4);
+INSERT INTO library.rating (id, author_id, book_copy_id, date, rating) VALUES (47, 1, 5, '2018-06-28 08:28:20', 3);
+INSERT INTO library.rating (id, author_id, book_copy_id, date, rating) VALUES (48, 1, 2, '2018-06-28 11:20:08', 3);
+INSERT INTO library.rating (id, author_id, book_copy_id, date, rating) VALUES (49, 1, 5, '2018-06-28 11:56:17', 4);
+INSERT INTO library.rating (id, author_id, book_copy_id, date, rating) VALUES (50, 1, 1, '2018-06-28 18:58:59', 3);
+INSERT INTO library.rating (id, author_id, book_copy_id, date, rating) VALUES (51, 1, 4, '2018-06-28 21:36:08', 3);
+INSERT INTO library.rating (id, author_id, book_copy_id, date, rating) VALUES (52, 1, 3, '2018-06-28 22:11:08', 3);
+INSERT INTO library.rating (id, author_id, book_copy_id, date, rating) VALUES (53, 4, 4, '2018-06-28 23:19:05', 3);
+INSERT INTO library.rating (id, author_id, book_copy_id, date, rating) VALUES (55, 5, 1, '2018-06-29 00:10:28', 4);
+INSERT INTO library.rating (id, author_id, book_copy_id, date, rating) VALUES (56, 5, 4, '2018-06-29 00:31:01', 3);
+INSERT INTO library.rating (id, author_id, book_copy_id, date, rating) VALUES (57, 5, 2, '2018-06-29 00:53:07', 3);
+INSERT INTO library.rating (id, author_id, book_copy_id, date, rating) VALUES (58, 5, 5, '2018-06-29 01:11:55', 3);
+INSERT INTO library.rating (id, author_id, book_copy_id, date, rating) VALUES (59, 1, 8, '2018-06-29 01:35:05', 4);
+INSERT INTO library.rating (id, author_id, book_copy_id, date, rating) VALUES (60, 1, 9, '2018-06-29 01:35:30', 3);

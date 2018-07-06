@@ -1,0 +1,15 @@
+<div class="dropdown-container" data-dropdown-container="{{ mapped }}">
+    <div class="dropdown-button noselect" data-dropdown-button="{{ mapped }}">
+        <p data-dropdown-action="{{ mapped }}" class="fi-absolute fi-plus"><span class="dropdown-label">{{ group }}</span>
+            <span class="dropdown-quantity">(
+                <span class="quantity" data-dropdown-quantity="{{ mapped }}">Любые </span>)
+            </span>
+        </p>
+    </div>
+    <div id="dropDownList" class="dropdown-list hidden visuallyHidden" data-dropdown-list="{{ mapped }}">
+        <input type="search" placeholder="Search states" data-dropdown-search="{{ mapped }}"  class="dropdown-search"/>
+        <div class="choices">
+            {{ form_widget(field) }}
+        </div>
+    </div>
+</div>

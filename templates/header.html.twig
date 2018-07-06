@@ -1,4 +1,9 @@
 <body>
 {% block header %}
 {{ include('layout/header.html.twig') }}
+<ul class="nav" id="side-menu">
+    <li>
+        <ul class="nav nav-second-level entitiesNav" id="entitiesNav"></ul>
+    </li>
+</ul>
 {% endblock %}

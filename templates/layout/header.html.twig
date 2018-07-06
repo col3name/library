@@ -1,49 +1,63 @@
 {% block header %}
-    <header class="header"><div class="grid-container">
-        <div class="grid-x grid-padding-x">
-            <div class="large-12 cell">
-                <span id="scrollTo"></span>
-                <ul class="top-bar">
-                    <li class="top-bar-left">
-                        <ul class="dropdown menu" data-dropdown-menu>
-                            <li><a href="{{ path('homepage') }}">Библиотека</a></li>
-                            <li><a href="{{ path('catalog_page') }}">Каталог</a></li>
-                            {% if (is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')) %}
-                                <li><a href="{{ path('logout') }}">Выйти</a></li>
-                            {% else %}
-                                <li><a href="{{ path('login') }}">Войти</a></li>
-                                <li><a href="{{ path('register') }}">Регистрация</a></li>
-                            {% endif %}
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <li><a href="{{ path('admin_page') }}">Админка</a></li>
-                            {% endif %}
-                        </ul>
-                    </li>
-                    <li class="top-bar-right">
-                        <ul class="menu">
-                            {% if app.request.attributes.get('_route') != 'ajax_search' %}
-                                {{ include('form/searchForm.html.twig') }}
-                            {% endif %}
-                        </ul>
-                    </li>
-                    <li class="top-bar-right">
-                        {% if is_granted('ROLE_USER') %}
-                                <img class="header-user-icon" src="{{ app.user.avatar }}" alt="avatar">
-                                <a class="left"
-                                   href="{{ path('profile_page', {'id': app.user.id}) }}">{{ app.user.username }}</a>
+    <span id="scrollTo"></span>
+    <header class="header">
+        <div class="grid-container">
+            <div class="grid-x grid-padding-x">
+                <div class="large-12 cell">
+                    <div class="menu2" data-hamburger-click="first">
+                        <div class='top'></div>
+                        <div class='middle'></div>
+                        <div class='bottom'></div>
+                    </div>
+                    <div class="menu-box" data-hamburger-active="first">
+                        <ul class="menu2-items">
+                            <li class="item"><a href="{{ path('homepage') }}"><span
+                                            class="header-text">Библиотека</span></a></li>
+                            <li class="item"><a href="{{ path('catalog_page') }}"><span
+                                            class="header-text">Каталог</span></a></li>
 
-                        {% endif %}
-                    </li>
-                </ul>
-            </div>
-            {% if app.request.attributes.get('_route') != 'ajax_search' %}
-                <ul class="nav" id="side-menu">
-                    <li>
-                        <ul class="nav nav-second-level entitiesNav" id="entitiesNav">
+                            <li class="item">{% if app.request.attributes.get('_route') != 'ajax_search' %}
+                                    {{ include('form/searchForm.html.twig') }}
+                                {% endif %}</li>
+
+                            <li class="item md-right" data-toggle="example-dropdown-bottom-right">
+                                <div class="card-profile"> {% if is_granted('ROLE_ADMIN') %}
+                                        <span class="header-user-text">Админка</span>
+                                    {% elseif is_granted('ROLE_USER') %}
+                                        <span class="header-user-text">{{ app.user.username }}</span>
+                                        <img class="header-user-icon" src="
+                                            {% if app.user.avatar|length > 0 %}
+                                                {{ app.user.avatar }}
+                                            {% else %}
+                                                {{ constant('App\\Entity\\User::DEFAULT_AVATAR') }}
+                                            {% endif %}
+                                        " alt="avatar">
+                                    {% else %}
+                                        <span class="header-user-text">Моя библиотека</span>
+                                    {% endif %}
+                                </div>
+                                <nav class="dropdown-pane" data-position="bottom" data-alignment="right"
+                                     id="example-dropdown-bottom-right" data-dropdown data-auto-focus="true">
+                                    {% if is_granted('ROLE_USER') %}
+                                        {{ include('profile/_navigation.html.twig', {pageUser: app.user }) }}
+                                    {% elseif is_granted('ROLE_ADMIN') %}
+                                        <div class="navigation-item" ><a href="{{ path('admin_show_book') }}">Администрирование книг</a></div>
+                                    {% else %}
+                                        <div class="navigation-item"><a href="{{ path('login') }}"><span
+                                                        class="header-text">Войти</span></a></div>
+                                        <dov class="navigation-item"><a href="{{ path('register') }}"><span
+                                                        class="header-text">Регистрация</span></a></dov>
+                                    {% endif %}
+                                    {% if (is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')) %}
+                                        <hr>
+                                        <div class="navigation-item"><a href="{{ path('logout') }}">Выйти</a></div>
+                                    {% endif %}
+                                </nav>
+                            </li>
                         </ul>
-                    </li>
-                </ul>
-            {% endif %}
+                    </div>
+                </div>
+            </div>
         </div>
-    </div></header>
+    </header>
 {% endblock %}

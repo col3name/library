@@ -1,0 +1,12 @@
+{#{% for entity in entities %}#}
+    {#<span>{{ entity.name }} </span>#}
+{#{% endfor %}#}
+<p>{{ title }}:
+    {% if entities|length == 0 %}
+        Пока отсутствуют
+    {% else %}
+        {% for entity in entities %}
+            <span> {{ entity.name }}, </span>
+        {% endfor %}
+    {% endif %}
+</p>

@@ -1,0 +1,17 @@
+{% extends 'layout/page.html.twig' %}
+
+{% block aside %}
+    <aside class="small-12 medium-12 large-2 cell">
+        {{ include('profile/_aside.html.twig') }}
+    </aside>
+{% endblock %}
+
+{% block content %}
+    <div class="small-12 medium-12 large-10 cell">
+        <div class="grid-container">
+            <div class="grid-x grid-padding-x cell">
+                {% block mainContent %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

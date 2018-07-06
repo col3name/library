@@ -2,10 +2,9 @@
 
 namespace App\Entity;
 
-use App\Entity\Comment;
-use App\Entity\Rating;
-use Doctrine\Common\Collections\ArrayCollection;
+//use App\Entity\DesiredBook;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -18,6 +17,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 class User implements UserInterface, \Serializable
 {
     const IMAGE_UPLOAD_DIRECTORY = 'upload/book/image/';
+    const DEFAULT_AVATAR = '/image/camera_200.png';
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -101,80 +102,9 @@ class User implements UserInterface, \Serializable
     /**
      * @var ArrayCollection
      * @ORM\ManyToMany(targetEntity="BookCopy", inversedBy="userReadedBookCopy")
-     * @ORM\JoinTable(name='readed_book_copy")
+     * @ORM\JoinTable(name="readed_book_copy")
      */
     private $readedBookCopy;
-
-    /**
-     * @return mixed
-     */
-    public function getFavoritesComment()
-    {
-        return $this->favoritesComment;
-    }
-
-    /**
-     * @param mixed $favoritesComment
-     */
-    public function setFavoritesComment($favoritesComment): void
-    {
-        $this->favoritesComment = $favoritesComment;
-    }
-
-    /**
-     * @param BookCopy $bookCopy
-     */
-    public function addFavoritesBookCopy(BookCopy $bookCopy) {
-        if ($this->bookCopyLiked($bookCopy)) {
-            return;
-        }
-
-        $this->favoritesBookCopy[] = $bookCopy;
-    }
-
-    /**
-     * @param BookCopy $bookCopy
-     */
-    public function removeFavoritesBookCopy(BookCopy $bookCopy) {
-        $this->favoritesBookCopy->removeElement($bookCopy);
-    }
-
-    /**
-     * @param BookCopy $bookCopy
-     * @return bool
-     */
-    public function bookCopyLiked(BookCopy $bookCopy)
-    {
-        return $this->favoritesBookCopy->contains($bookCopy);
-    }
-
-    /**
-     * @return ArrayCollection
-     */
-    public function getReadedBookCopy(): ArrayCollection
-    {
-        return $this->readedBookCopy;
-    }
-
-    /**
-     * @param ArrayCollection $readedBookCopy
-     */
-    public function setReadedBookCopy(ArrayCollection $readedBookCopy): void
-    {
-        $this->readedBookCopy = $readedBookCopy;
-    }
-
-    public function addReadedBookCopy(BookCopy $bookCopy) {
-        if ($this->readedBookCopy->contains($bookCopy)) {
-            return;
-        }
-
-        $this->readedBookCopy[] = $bookCopy;
-    }
-
-    public function removeReadedBookCopy(BookCopy $bookCopy) {
-        $this->readedBookCopy->removeElement($bookCopy);
-    }
 
     /**
      * User constructor.
@@ -237,7 +167,8 @@ class User implements UserInterface, \Serializable
         $this->commentsAuthored = $commentsAuthored;
     }
 
-    public function countCommentsAuthored() {
+    public function countCommentsAuthored()
+    {
         return $this->commentsAuthored->count();
     }
 
@@ -353,6 +284,12 @@ class User implements UserInterface, \Serializable
         $this->avatar = $avatar;
     }
 
+
+    public function removeAvatar(): void
+    {
+        $this->avatar = User::DEFAULT_AVATAR;
+    }
+
     /**
      * @return mixed
      */
@@ -383,6 +320,95 @@ class User implements UserInterface, \Serializable
     public function getRoles()
     {
         return $this->roles;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFavoritesComment()
+    {
+        return $this->favoritesComment;
+    }
+
+    /**
+     * @param mixed $favoritesComment
+     */
+    public function setFavoritesComment($favoritesComment): void
+    {
+        $this->favoritesComment = $favoritesComment;
+    }
+
+    /**
+     * @param BookCopy $bookCopy
+     */
+    public function addFavoritesBookCopy(BookCopy $bookCopy)
+    {
+        if ($this->bookCopyLiked($bookCopy)) {
+            return;
+        }
+        $this->favoritesBookCopy[] = $bookCopy;
+    }
+
+    /**
+     * @param BookCopy $bookCopy
+     */
+    public function removeFavoritesBookCopy(BookCopy $bookCopy)
+    {
+        $this->favoritesBookCopy->removeElement($bookCopy);
+    }
+
+    /**
+     * @param BookCopy $bookCopy
+     * @return bool
+     */
+    public function bookCopyLiked(BookCopy $bookCopy)
+    {
+        return $this->favoritesBookCopy->contains($bookCopy);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReadedBookCopy()
+    {
+        return $this->readedBookCopy;
+    }
+
+    /**
+     * @param mixed $readedBookCopy
+     */
+    public function setReadedBookCopy(ArrayCollection $readedBookCopy): void
+    {
+        $this->readedBookCopy = $readedBookCopy;
+    }
+
+    /**
+     * @param BookCopy $bookCopy
+     */
+    public function addReadedBookCopy(BookCopy $bookCopy)
+    {
+        if ($this->bookCopyReaded($bookCopy)) {
+            return;
+        }
+
+        $this->readedBookCopy[] = $bookCopy;
+    }
+
+    /**
+     * @param BookCopy $bookCopy
+     */
+    public function removeReadedBookCopy(BookCopy $bookCopy)
+    {
+        $this->readedBookCopy->removeElement($bookCopy);
+    }
+
+    /**
+     * @param BookCopy $bookCopy
+     * @return bool
+     */
+    public function bookCopyReaded(BookCopy $bookCopy): bool
+    {
+        return $this->readedBookCopy->contains($bookCopy);
     }
 
     public function eraseCredentials()

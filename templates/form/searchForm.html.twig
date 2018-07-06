@@ -1,10 +1,11 @@
-{% block search %}
-    <div class="sidebar-search">
-        <form action="{{ path('ajax_search') }}" method="GET">
-            <div class="">
-                <input type="text" id="search" class="search-box-small" name="q" placeholder="Поиск...">
-                <button class="search-button" type="submit"><i class="fi-magnifying-glass fi-list-size"></i></button>
-            </div>
-        </form>
-    </div>
-{% endblock %}
+<div class="sidebar-search">
+    <form action="{{ path('ajax_search') }}" method="GET">
+        <div class="">
+            <input type="text" id="headerSearch" class="search-box-small" name="q" placeholder="Поиск...">
+            <button class="search-button" type="submit">
+                <i class="fi-magnifying-glass fi-list-size"></i>
+            </button>
+        </div>
+    </form>
+</div>
+<a href="{{ path('ajax_search') }}" class="search-small"><i class="fi-magnifying-glass fi-list-size"></i> Поиск</a>

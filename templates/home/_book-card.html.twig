@@ -1,5 +1,20 @@
-<img class="small-image" src="/{{ bookCopy.imagePath }}" alt="book image">
-<h6>
-    <a href="{{ path('catalog_show', {'id': bookCopy.id}) }}">{{ bookCopy.book.name }}</a>
-</h6>
-<p>{{ bookCopy.book.description|length > 40 ? bookCopy.book.description|slice(0, 40) ~ '...' : bookCopy.book.description }}</p>
+{#<div class="post-module">#}
+    {#<img class="small-image" src="/{{ bookCopy.imagePath }}" alt="book image">#}
+    {#<h6>#}
+        {#<a href="{{ path('catalog_show', {'id': bookCopy.id}) }}">{{ bookCopy.book.name }}</a>#}
+    {#</h6>#}
+    {#<p>{{ bookCopy.book.description|length > 40 ? bookCopy.book.description|slice(0, 40) ~ '...' : bookCopy.book.description }}</p>#}
+{#</div>#}
+
+<div class="post-module">
+    <div class="thumbnail">
+        <img src="/{{ bookCopy.imagePath }}"/>
+    </div>
+    <div class="post-content">
+        {% for genre in bookCopy.book.genresBook %}
+            <div class="category">{{ genre.name }}</div>
+        {% endfor %}
+        <h3><a href="{{ path('catalog_show', {'id': bookCopy.id}) }}"><span class="title">{{ bookCopy.book.name }}</span></a></h3>
+        <p class="description">{{ bookCopy.book.description|length > 80 ? bookCopy.book.description|slice(0, 80) ~ '...' : bookCopy.book.description }}</p>
+    </div>
+</div>

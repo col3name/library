@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use App\Entity\Book;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Class Genre
@@ -27,8 +27,8 @@ class Genre
     private $name;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Book", inversedBy="genresBook", cascade={"persist", "remove"})
-     * @ORM\JoinTable(name="genre_book")
+     * @var ArrayCollection
+     * @ORM\ManyToMany(targetEntity="Book", mappedBy="genresBook", cascade={"persist", "remove"})
      */
     private $books;
 

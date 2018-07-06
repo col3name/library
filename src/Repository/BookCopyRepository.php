@@ -29,21 +29,12 @@ class BookCopyRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param string $query
-     * @return string
-     */
-    private function sanitizeSearchQuery(string $query): string
-    {
-        return trim(preg_replace('/[[:space:]]+/', ' ', $query));
-    }
-
-    /**
      * @param $bookCopyId
      * @return array|mixed
      */
     public function countLike($bookCopyId)
     {
-        $builder =  $this->getQueryBuilder();
+        $builder = $this->getQueryBuilder();
 
         return $builder
             ->select('COUNT(user) AS countLike')
@@ -110,27 +101,15 @@ class BookCopyRepository extends ServiceEntityRepository
     public function findForCatalog(int $page, int $limit = BookCopy::NUM_ITEMS, array $options = null)
     {
         $builder = $this->getQueryBuilder();
-
         $builder
             ->select('bookCopy')
             ->from('App:BookCopy', 'bookCopy')
             ->leftJoin('bookCopy.book', 'book');
 
-        $genreId = $options['genreId'];
-        if (isset($genreId) && is_numeric($genreId)) {
-            $builder->innerJoin('book.genresBook', 'genresBook', 'WITH', 'genresBook.id = :genreId')
-                ->setParameter('genreId', $genreId);
-        }
-
-        $authorId = $options['authorId'];
-        if (isset($genreId) && is_numeric($authorId)) {
-            $builder->innerJoin('book.authorsBook', 'authorsBook', 'WITH', 'authorsBook.id = :authorId')
-                ->setParameter('authorId', $authorId);
-        }
-
-        $this->sortCatalogData($options, $builder);
+        $this->selectByOptions($options, $builder);
 
         $offset = ($page - 1) * $limit;
+
         return $builder
             ->setFirstResult($offset)
             ->setMaxResults($limit)
@@ -285,8 +264,6 @@ class BookCopyRepository extends ServiceEntityRepository
             ->where('bookCopy.id = :bookCopyId AND issuance.releaseDate IS NULL')
             ->setParameter('bookCopyId', $bookCopyId);
 
-//        $this->bookedBookCopy($builder, $bookCopyId);
-
         return $builder
             ->getQuery()
             ->execute();
@@ -359,10 +336,10 @@ class BookCopyRepository extends ServiceEntityRepository
      * @param array $options
      * @param $builder
      */
-    private function sortCatalogData(array $options, QueryBuilder $builder): void
+    private function sortCatalogData(array $options, QueryBuilder $builder)
     {
-        $orderBy = $options['orderBy'];
-        if (isset($orderBy)) {
+        if (isset($options['orderBy'])) {
+            $orderBy = $options['orderBy'];
             $sortField = $options['sortField'];
 
             if ($sortField === 'bookName') {
@@ -371,5 +348,44 @@ class BookCopyRepository extends ServiceEntityRepository
                 $builder->orderBy('book.publicationYear', $orderBy);
             }
         }
+    }
+
+    /**
+     * @param $id
+     * @param QueryBuilder $builder
+     * @param $joinTable
+     */
+    private function InnerJoin($id, QueryBuilder $builder, $joinTable): void
+    {
+        if (isset($id) && is_numeric($id)) {
+            $builder->innerJoin($joinTable, 'entity', 'WITH', 'entity.id = :id')
+                ->setParameter('id', $id);
+        }
+    }
+
+    /**
+     * @param array $options
+     * @param $builder
+     */
+    private function selectByOptions(array $options = null, $builder)
+    {
+        if (isset($options)) {
+            if (isset($options['genreId'])) {
+                $this->InnerJoin($options['genreId'], $builder, 'book.genresBook');
+            }
+            if (isset($options['authorId'])) {
+                $this->InnerJoin($options['authorId'], $builder, 'book.authorsBook');
+            }
+            $this->sortCatalogData($options, $builder);
+        }
+    }
+
+    /**
+     * @param string $query
+     * @return string
+     */
+    private function sanitizeSearchQuery(string $query): string
+    {
+        return trim(preg_replace('/[[:space:]]+/', ' ', $query));
     }
 }

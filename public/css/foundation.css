@@ -3060,65 +3060,6 @@ a.button:hover, a.button:focus {
     color: #cacaca;
     cursor: not-allowed; }
 
-.pagination {
-  margin-left: 0;
-  margin-bottom: 1rem; }
-  .pagination::before, .pagination::after {
-    display: table;
-    content: ' ';
-    -ms-flex-preferred-size: 0;
-        flex-basis: 0;
-    -ms-flex-order: 1;
-        order: 1; }
-  .pagination::after {
-    clear: both; }
-  .pagination li {
-    margin-right: 0.0625rem;
-    border-radius: 3px;
-    font-size: 0.875rem;
-    display: none; }
-    .pagination li:last-child, .pagination li:first-child {
-      display: inline-block; }
-    @media print, screen and (min-width: 40em) {
-      .pagination li {
-        display: inline-block; } }
-  .pagination a,
-  .pagination button {
-    display: block;
-    padding: 0.1875rem 0.625rem;
-    border-radius: 3px;
-    color: #0a0a0a; }
-    .pagination a:hover,
-    .pagination button:hover {
-      background: #e6e6e6; }
-  .pagination .current {
-    padding: 0.1875rem 0.625rem;
-    background: #2ba6cb;
-    color: #fefefe;
-    cursor: default; }
-  .pagination .disabled {
-    padding: 0.1875rem 0.625rem;
-    color: #cacaca;
-    cursor: not-allowed; }
-    .pagination .disabled:hover {
-      background: transparent; }
-  .pagination .ellipsis::after {
-    padding: 0.1875rem 0.625rem;
-    content: '\2026';
-    color: #0a0a0a; }
-
-.pagination-previous a::before,
-.pagination-previous.disabled::before {
-  display: inline-block;
-  margin-right: 0.5rem;
-  content: '\00ab'; }
-
-.pagination-next a::after,
-.pagination-next.disabled::after {
-  display: inline-block;
-  margin-left: 0.5rem;
-  content: '\00bb'; }
-
 .accordion {
   margin-left: 0;
   background: #fefefe;
@@ -3841,16 +3782,16 @@ table.scroll {
   width: 100%;
   overflow-x: auto; }
 
-table.hover thead tr:hover {
+table.hover-thumbnail thead tr:hover {
   background-color: #f3f3f3; }
 
-table.hover tfoot tr:hover {
+table.hover-thumbnail tfoot tr:hover {
   background-color: #ececec; }
 
-table.hover tbody tr:hover {
+table.hover-thumbnail tbody tr:hover {
   background-color: #f9f9f9; }
 
-table.hover:not(.unstriped) tr:nth-of-type(even):hover {
+table.hover-thumbnail:not(.unstriped) tr:nth-of-type(even):hover {
   background-color: #ececec; }
 
 .table-scroll {
@@ -4193,7 +4134,7 @@ a.thumbnail {
 .grid-container {
   padding-right: 0.9375rem;
   padding-left: 0.9375rem;
-  max-width: 62.5rem;
+  max-width: 90.5rem;
   margin: 0 auto; }
   .grid-container.fluid {
     padding-right: 0.9375rem;

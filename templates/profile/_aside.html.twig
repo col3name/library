@@ -1,18 +1,9 @@
 {% block aside %}
-    <aside class="small-12 medium-12 large-3 cell">
-        {% if (is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')) %}
-            {#{% if pageUser == authorizedUser %}#}
-            <ul>
-                <li>
-                    <p><a href="{{ path('show_comment', {'id': pageUser.id }) }}">Мои отзывы</a></p>
-                    <p><a href="{{ path('edit-profile', {'id': pageUser.id }) }}">Настройки</a></p>
-                    <p><a href="{{ path('history_issuance') }}">История взятых
-                            книг</a></p>
-                    <p><a href="{{ path('taken_book') }}">Мои книги</a></p>
-                    <p><a href="{{ path('liked_books') }}">Понравившиеся книги</a></p>
-                </li>
-            </ul>
-            {#{% endif %}#}
-        {% endif %}
-    </aside>
+    {% if (is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')) %}
+        <ul>
+            <li>
+               {{ include('profile/_navigation.html.twig') }}
+            </li>
+        </ul>
+    {% endif %}
 {% endblock %}

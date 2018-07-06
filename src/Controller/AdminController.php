@@ -2,21 +2,22 @@
 
 namespace App\Controller;
 
-use App\Entity\Author;
 use App\Entity\Book;
-use App\Entity\BookCopy;
 use App\Entity\Genre;
-use App\Form\AuthorBookType;
-use App\Form\BookCopyType;
+use App\Entity\Author;
+use App\Entity\BookCopy;
 use App\Form\GenreType;
+use App\Form\BookCopyType;
+use App\Form\AuthorBookType;
 use App\Repository\AuthorRepository;
 use App\Repository\BookCopyRepository;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * Class AdminController
@@ -43,8 +44,8 @@ class AdminController extends Controller
     public function showBook(Request $request, BookCopyRepository $bookCopyRepository)
     {
         $page = $request->get('page') ?? 1;
-        $limit = $request->get('limit') ?? BookCopy::NUM_ITEMS;
-        $orderBy = $request->get('orderBy') ?? 'ASC';
+//        $limit = $request->get('limit') ?? BookCopy::NUM_ITEMS;
+//        $orderBy = $request->get('orderBy') ?? 'ASC';
 
         $books = $bookCopyRepository->findForCatalog($page);
 
@@ -59,9 +60,10 @@ class AdminController extends Controller
      * @param Book $book
      * @param AuthorRepository $authorRepository
      * @return Response
-     * @Route("/{id}/add-book", name="addBook")
+     * @Route("/{id}/add-book", name="addBook")a
      */
-    public function addAuthor(Request $request, Book $book, AuthorRepository $authorRepository) {
+    public function addAuthorForBook(Request $request, Book $book, AuthorRepository $authorRepository)
+    {
         $authorId = $request->get('authorId') ?? 1;
         /** @var Author $author */
         $author = $authorRepository->findById($authorId);
@@ -76,7 +78,7 @@ class AdminController extends Controller
 
         $book->addAuthorsBook($author);
 
-        $entityManager = $this->getEntityManager();
+//        $entityManager = $this->getEntityManager();
 //        $entityManager->persist($author);
 //        $entityManager->persist($book);
 //        $entityManager->flush();
@@ -87,8 +89,7 @@ class AdminController extends Controller
         ]);
     }
 
-
-        /**
+    /**
      * @Route("/admin/book/edit/{id}", requirements={"id": "\d+"}, name="book_edit")
      * @Security("has_role('ROLE_ADMIN')")
      * @Method({"GET", "POST"})
@@ -98,11 +99,17 @@ class AdminController extends Controller
      */
     public function edit(Request $request, BookCopy $bookCopy): Response
     {
+        $bookCopy->setImagePath(new File($bookCopy->getImagePath()));
         $form = $this->createForm(BookCopyType::class, $bookCopy);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            dump($bookCopy);
+            $this->persistEntity($bookCopy);
+
+//            $entityManager =  $this->getDoctrine()->getManager();
+//            $entityManager->flush();
+            $this->addFlash('success', 'Книга обновлена');
 
             return $this->redirectToRoute('admin_show_book');
         }
@@ -111,17 +118,6 @@ class AdminController extends Controller
             'bookCopy' => $bookCopy,
             'form' => $form->createView(),
         ]);
-    }
-
-    public function addBookCopy(BookCopy $bookCopy)
-    {
-        $countBookCopy = $bookCopy->getCount();
-
-        if ($this->isPossibleAddCopy($countBookCopy)) {
-            $this->incrementBookCopyCount($bookCopy, $countBookCopy);
-        }
-
-        return $this->redirectToRoute('admin_show_book');
     }
 
     /**
@@ -156,17 +152,19 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/book/delete/{id}", requirements={"id": "\d+"}, name="book_delete")
+     * @Route("/admin/book/book-delete/{id}", requirements={"id": "\d+"}, name="book_delete")
      * @Security("has_role('ROLE_ADMIN')")
      * @Method({"GET", "POST"})
+     * @param Request $request
      * @param BookCopy $bookCopy
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @return \Symfony\Component\HttpFoundation\JsonResponse|\Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function delete(BookCopy $bookCopy)
+    public function delete(Request $request, BookCopy $bookCopy)
     {
-        $entityManager = $this->getEntityManager();
-        $entityManager->remove($bookCopy);
-        $entityManager->flush();
+//        $submittedToken = $request->request->get('token');
+
+        $this->removeEntity($bookCopy);
+        $this->addFlash('success', 'Книга удалена');
 
         return $this->redirectToRoute('admin_show_book');
     }
@@ -186,6 +184,8 @@ class AdminController extends Controller
             'view' => 'admin/book/new-book-author.html.twig'
         ];
 
+        $this->addFlash('success', 'Автор добавлен');
+
         return $this->newEntity($request, $options);
     }
 
@@ -203,6 +203,8 @@ class AdminController extends Controller
             'failedRedirectRoute' => 'new_genre',
             'view' => 'admin/book/new-genre.html.twig'
         ];
+
+        $this->addFlash('success', 'Жанр добавлен');
 
         return $this->newEntity($request, $options);
     }
@@ -231,7 +233,7 @@ class AdminController extends Controller
 
         $renderParameters['form'] = $form->createView();
 
-        return $this->render($view,$renderParameters);
+        return $this->render($view, $renderParameters);
     }
 
     /**
@@ -283,12 +285,36 @@ class AdminController extends Controller
     }
 
     /**
-     * @param $bookCopy
+     * @param $entity
      */
-    private function persistEntity($bookCopy): void
+    private function persistEntity($entity): void
     {
         $entityManager = $this->getEntityManager();
-        $entityManager->persist($bookCopy);
+        $entityManager->persist($entity);
         $entityManager->flush();
+    }
+
+    /**
+     * @param $entity
+     * @return bool
+     */
+    private function removeEntity($entity): bool
+    {
+        $isSuccess = true;
+
+        $entityManager = $this->getEntityManager();
+        $entityManager->remove($entity);
+        $entityManager->flush();
+        return $isSuccess;
+    }
+
+    /**
+     * @param $selectedId
+     * @param $statues
+     * @return false|int|string
+     */
+    private function isValidStatus($selectedId, $statues)
+    {
+        return array_search($selectedId, array_column($statues, 'id'));
     }
 }

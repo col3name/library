@@ -1,37 +1,29 @@
-{% extends 'base.html.twig' %}
+{% extends 'layout/profile.html.twig' %}
 
-{% block main %}
-    <div class="grid-container">
-        <div class="grid-x grid-padding-x cell">
-            <div class="small-12 cell">
-                {{ include('profile/_breadcrumbs.html.twig', {
-                    'path': 'profile_page',
-                    'section': 'Профиль',
-                    'entity': pageUser,
-                    'entityId': pageUser.id,
-                    'ditailedPage': pageUser.username,
-                    'currentPage': 'Понравивиеся книги'}) }}
+{% block breadcrumbs %}
+    {{ include('profile/_breadcrumbs.html.twig', {
+        'path': 'profile_page',
+        'section': 'Профиль',
+        'entity': pageUser,
+        'entityId': pageUser.id,
+        'ditailedPage': pageUser.username,
+        'currentPage': 'Понравивиеся книги'}) }}
+{% endblock %}
+
+{% block mainContent %}
+    <div class="small-12 cell">
+        <h2>Понравившиаеся книги ({{ pageUser.favoritesBookCopy|length }})</h2>
+    </div>
+    <div class="grid-x grid-padding-x cell">
+        {% for bookCopy in pageUser.favoritesBookCopy %}
+            <div class="small-12 medium-6 large-4 cell">
+                {{ include('home/_book-card.html.twig') }}
+                {% if is_granted('ROLE_USER') %}
+                    <p id="like" data-bookCopyId="{{ bookCopy.id }}"><i class="fi-heart fi-list-size like"></i></p>
+                {% endif %}
             </div>
-            {{ include('profile/_aside.html.twig') }}
-            <div class="small-12 medium-12 large-9 cell">
-                <div class="grid-container">
-                    <div class="small-12 cell">
-                        <h2>Понравившиаеся книги ({{ pageUser.favoritesBookCopy|length }})</h2>
-                    </div>
-                    <div class="grid-x grid-padding-x cell">
-                        {% for bookCopy in pageUser.favoritesBookCopy %}
-                            <div class="small-12 medium-6 large-4 cell">
-                                {{ include('home/_book-card.html.twig') }}
-                                {% if is_granted('ROLE_USER') %}
-                                    <p id="like" data-bookCopyId="{{ bookCopy.id }}"><i class="fi-heart fi-list-size like"></i></p>
-                                {% endif %}
-                            </div>
-                        {% else %}
-                            Книг не найдено
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% else %}
+            Книг не найдено
+        {% endfor %}
     </div>
 {% endblock %}

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Book;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -27,10 +28,16 @@ class Author
     private $name;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Book", inversedBy="authorsBook")
-     * @ORM\JoinTable(name="author_book")
+     * @var ArrayCollection
+     * @ORM\ManyToMany(targetEntity="Book", mappedBy="authorsBook", cascade={"persist", "remove"})
      */
     private $books;
+
+    /**
+     * @var ArrayCollection
+     * @ORM\ManyToMany(targetEntity="Task", mappedBy="tags", cascade={"persist", "remove"})
+     */
+    private $tasks;
 
     /**
      * @return int

@@ -4,8 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Issuance;
 use App\Entity\User;
+use App\Form\CustomFileType;
 use App\Form\ProfileUserType;
 use App\Repository\UserRepository;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,46 +24,84 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class ProfileController extends Controller
 {
     /**
+     * @param Request $request
      * @param User $user
      * @param UserRepository $userRepository
      * @return \Symfony\Component\HttpFoundation\Response
      * @Route("/profile/{id}", requirements={"\d+"}, name="profile_page")
      */
-    public function index(User $user, UserRepository $userRepository)
+    public function index(Request $request, User $user, UserRepository $userRepository)
     {
         if (!$this->isAuthorizedUser($user)) {
             return $this->redirectToRoute('login');
         }
 
         $userBooks = $userRepository->findIssuanceHistory($user->getId());
+        $avatarEdit = $this->createForm(CustomFileType::class, $user);
+        $avatarEdit->handleRequest($request);
+
+        if ($avatarEdit->isSubmitted() && $avatarEdit->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->flush();
+
+            return $this->redirectToRoute('profile_page', [ 'id' => $user->getId() ]);
+        }
 
         return $this->render('profile/index.html.twig', [
             'pageUser' => $user,
             'authorizedUser' => $this->getUser(),
-            'userBooks' => $userBooks
+            'userBooks' => $userBooks,
+            'avatarEdit' => $avatarEdit->createView()
         ]);
     }
 
     /**
-     * @Route("/profile/{id}/show-comment", requirements={"id" = "\d+"},  name="show_comment")
      * @param Request $request
+     * @param User $responseUser
+     * @Route("/profile/{id}/delete-avatar", name="deleteAvatar")
+     * @return JsonResponse|\Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function deleteAvatar(Request $request, User $responseUser) {
+        if (!$this->isAuthorizedUser($responseUser)) {
+            return $this->redirectToRoute('login');
+        }
+
+        if (!$request->isXmlHttpRequest()) {
+            return $this->redirectToRoute('profile_page', ['
+                id' =>$responseUser->getId()
+            ]);
+        }
+
+        try {
+            /**
+             * @var User $user
+             */
+            $user->setAvatar(User::DEFAULT_AVATAR);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($user);
+            $entityManager->flush();
+        } catch (\Exception $exception) {
+            return new JsonResponse(['result'=> $exception->getMessage()]);
+        }
+
+        return new JsonResponse(['success'=> true], 200);
+    }
+
+    /**
+     * @Route("/profile/{id}/show-comment", requirements={"id" = "\d+"},  name="show_comment")
      * @param User $user
      * @return Response
      * @Security("has_role('ROLE_USER')")
      */
-    public function showComments(Request $request, User $user)
+    public function showComments(User $user)
     {
         if (!$this->isAuthorizedUser($user)) {
             return $this->redirectToRoute('login');
         }
 
-        $page = $this->getPage($request);
-
-        $renderParameters = [
-            'user' => $user,
-        ];
-
-        return $this->render('profile/show-comment.html.twig', $renderParameters);
+        return $this->render('profile/show-comment.html.twig', [
+            'pageUser' => $user,
+        ]);
     }
 
     /**
@@ -82,11 +123,13 @@ class ProfileController extends Controller
             $issuanceHistory = $repository->findIssuanceHistory($user->getId(), $page, 10);
             $result = $this->parseIssuance($issuanceHistory);
 
+            $this->addFlash('success', 'Книга возращена');
+
             return $this->json($result);
         }
 
         $parameters = [
-            'user' => $user,
+            'pageUser' => $user,
             'takenBooks' => $issuanceHistory,
             'page' => $page
         ];
@@ -108,6 +151,21 @@ class ProfileController extends Controller
         ];
 
         return $this->render('profile/liked.html.twig', $parameters);
+    }
+
+    /**
+     * @return Response
+     * @Route("/readed-book", name="readed_book")
+     * @Security("has_role('ROLE_USER')")
+     */
+    public function readedBooks() {
+        $user = $this->getUser();
+
+        $parameters = [
+            'pageUser' => $user
+        ];
+
+        return $this->render('profile/readed-books.html.twig', $parameters);
     }
 
     /**
@@ -134,7 +192,7 @@ class ProfileController extends Controller
         }
 
         $parameters = [
-            'user' => $user,
+            'pageUser' => $user,
             'takenBooks' => $takenBooks,
             'page' => $page
         ];
@@ -157,18 +215,20 @@ class ProfileController extends Controller
             return $this->redirectToRoute('login');
         }
 
+        $oldPassword = $user->getPassword();
+
         $form = $this->createForm(ProfileUserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->setPassword($user, $passwordEncoder);
-            $this->getDoctrine()->getManager()->flush();
+            $this->setPassword($user, $passwordEncoder, $oldPassword);
+//            $this->getDoctrine()->getManager()->flush();
 
             $redirectParameters = [
                 'id' => $user->getId()
             ];
 
-            return $this->redirectToRoute('profile_page', $redirectParameters);
+//            return $this->redirectToRoute('profile_page', $redirectParameters);
         }
 
         $redirectParameters = [
@@ -259,9 +319,12 @@ class ProfileController extends Controller
     /**
      * @param User $user
      * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param String $oldPassword
      */
-    private function setPassword(User $user, UserPasswordEncoderInterface $passwordEncoder): void
+    private function setPassword(User $user, UserPasswordEncoderInterface $passwordEncoder, String $oldPassword): void
     {
+        var_dump($user->getPlainPassword());
+
         $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
         $user->setPassword($password);
     }

@@ -23,14 +23,13 @@ class SearchController extends Controller
     public function search(Request $request, BookCopyRepository $repository)
     {
         if ($request->isXmlHttpRequest()) {
-            $foundBooks = $this->handleSearch($request, $repository);
-
+            $foundBooks = $this->findBySearch($request, $repository);
             return $this->json($foundBooks);
         }
 
-        $foundBooks = $this->handleSearch($request, $repository);
+        $foundBooks = $this->findBySearch($request, $repository);
 
-        return $this->render('catalog/search.html.twig', [
+        return $this->render('search/index.html.twig', [
             'foundBooks' => $foundBooks
         ]);
     }
@@ -40,7 +39,7 @@ class SearchController extends Controller
      * @param BookCopyRepository $repository
      * @return mixed
      */
-    private function handleSearch(Request $request, BookCopyRepository $repository)
+    private function findBySearch(Request $request, BookCopyRepository $repository)
     {
         $search = $request->get('q') ?? '';
         return $repository->findBySearch($search);

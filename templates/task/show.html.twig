@@ -1,0 +1,21 @@
+{% extends 'layout/page.html.twig' %}
+
+{% block content %}
+    <div class="small-12 cell">
+        {{ task.description }}
+        {% for tag in task.tags %}
+            <p>{{ tag.name }}</p>
+        {% endfor %}
+    </div>
+    <div class="small-12 cell">
+        {{ task.description }}
+        {% for authors in task.authors %}
+            <p>{{ authors.name }}</p>
+        {% endfor %}
+    </div>
+    <div class="small-12 cell">
+        <p><a href="{{ path('task-edit', {'id': task.id}) }}">edit</a></p>
+        <p><a href="{{ path('task-page') }}">task-page</a></p>
+        <p><a href="{{ path('task-new') }}">task-new</a></p>
+    </div>
+{% endblock %}

@@ -1,70 +1,97 @@
-{% extends 'base.html.twig' %}
+{% extends 'layout/page.html.twig' %}
 
-{% block main %}
-    <div class="grid-container">
-        <div class="grid-x grid-padding-x grid-padding-y">
-            <div class="small-12 cell">
-                {{ include('profile/_breadcrumbs.html.twig', {
-                    'path': 'catalog_page',
-                    'section': 'Каталог',
-                    'entityId': '',
-                    'entity': bookCopy,
-                    'ditailedPage': bookCopy.book.name,
-                    'currentPage': ''}) }}
-            </div>
-            <div class="large-4 cell">
-                <img class="book-image" src="/{{ bookCopy.imagePath }}" alt="">
-            </div>
-            <div class="large-8 cell">
-                {{ include('catalog/_show-book.html.twig') }}
-            </div>
-            <div class="small-12 cell">
-                <h5>Описание:</h5>
-                <p>{{ bookCopy.book.description }}</p>
-            </div>
-            {% if whoHasBooks|length > 0%}
-                <div class="small-12 cell">
-                    <h5>Кто взял: </h5>
-                    <div class="grid-container">
-                        <div class="grid-x grid-padding-x grid-padding-y">
-                            {% for whoHasBook in whoHasBooks %}
-                                <div class="small-6 medium-4 large-3 cell">
-                                    <img src="{{ whoHasBook.readerAvatar }}" alt="">
-                                    <p>
-                                        <a href="{{ path('profile_page', {'id': whoHasBook.readerId }) }}"> {{ whoHasBook.readerName }}</a>
-                                    </p>
-                                    <p>Освободиться ближе к
+ {% block breadcrumbs %}
+     {{ include('profile/_breadcrumbs.html.twig', {
+         'path': 'catalog_page',
+         'section': 'Каталог',
+         'entityId': '',
+         'entity': bookCopy,
+         'ditailedPage': bookCopy.book.name,
+         'currentPage': ''}) }}
+ {% endblock %}
+
+{% block content %}
+    <div class="reveal" id="showImage" data-reveal data-reset-on-close="true" data-animation-in="fade-in" data-animation-out="fade-out">
+        <img src="/{{ bookCopy.imagePath }}" alt="">
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="medium-5 large-4 cell">
+        <img class="book-image" data-open="showImage" src="/{{ bookCopy.imagePath }}" alt="">
+    </div>
+    <div class="medium-7 large-8 cell">
+        {{ include('catalog/_show-book.html.twig') }}
+    </div>
+    <div class="small-12 cell">
+        <hr>
+        <h5>Описание:</h5>
+        {{ bookCopy.book.description|toHtml }}
+    </div>
+
+    {% if whoHasBooks|length > 0 %}
+        <div class="small-12 cell">
+            <h5>Кто взял: </h5>
+            <div class="grid-container">
+                <div class="grid-x grid-padding-x grid-padding-y">
+                    {% for whoHasBook in whoHasBooks %}
+                        <div class="small-12 medium-4 large-3 cell">
+                            <div class="media-object">
+                                <div class="media-object-section"><img class="sm-image circle"
+                                                                       src="{{ whoHasBook.readerAvatar }}" alt=""></div>
+                                <div class="media-object-section main-section">
+                                    <h6 class="main-section-title">
+                                        {#<a href="{{ path('profile_page', {'id': whoHasBook.readerId }) }}"> #}
+                                        {{ whoHasBook.readerName }}
+                                        {#</a>#}
+                                    </h6>
+                                    <p class="main-section-content">Освободиться ближе к
                                         <time>{{ whoHasBook.deadlineDate|date("d M Y") }}</time>
                                     </p>
                                 </div>
-                            {% endfor %}
+                            </div>
                         </div>
-                    </div>
+                    {% endfor %}
                 </div>
-            {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="large-12 cell">
+        <h4>Рекомендуем также {{ recomendedBooks|length }}</h4>
+        <div class="small-12 medium-3 cell">
+            <div class="grid-x grid-padding-x grid-padding-y">
+                {% for bookCopy in recomendedBooks %}
+                    <div class="small-6 medium-4 large-3 cell">
+                        <img class="sm-image" src="/{{ bookCopy.imagePath }}" alt="book image">
+                        <h6 class="main-section-title">
+                            <a href="{{ path('catalog_show', {'id': bookCopy.id}) }}">{{ bookCopy.book.name }}</a>
+                        </h6>
+                        <p class="main-section-content">{{ bookCopy.book.description|length > 40 ? bookCopy.book.description|slice(0, 40) ~ '...' : bookCopy.book.description }}</p>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 
-    <div class="grid-container">
-        <div class="grid-x grid-padding-x grid-padding-y">
-            <div class="large-12 cell">
-                <h4>Оцените книгу</h4>
-            </div>
-            <div class="large-12 cell">
-                {{ include('catalog/_comment-book.html.twig') }}
-            </div>
-            <div class="large-12 cell">
-                <h4>Отзывы ({{ bookCopy.comments|length }})</h4>
-            </div>
-            <div class="large-12 cell">
-                {{ include('catalog/_comment-show.html.twig', {
-                    'profilePage': '',
-                    'comments': bookCopy.comments,
-                    'nullMessage': 'Станьте первым кто оставит комментарий!'}) }}
-            </div>
-        </div>
+    <div class="large-12 cell">
+        <h4 id="comments">Оцените книгу</h4>
+    </div>
+    <div class="large-12 cell">
+        {{ include('catalog/_comment-book.html.twig') }}
+    </div>
+    <div class="large-12 cell">
+        <h4>Отзывы ({{ bookCopy.comments|length }})</h4>
+    </div>
+    <div class="large-12 cell">
+        {{ include('catalog/_comment-show.html.twig', {
+            'profilePage': '',
+            'comments': bookCopy.comments,
+            'nullMessage': 'Станьте первым кто оставит комментарий!'}) }}
     </div>
 {% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('js/vendor/jquery.raty.js') }}"></script>

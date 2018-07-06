@@ -5,7 +5,7 @@ namespace App\Entity;
 use App\Entity\Genre;
 use App\Entity\Author;
 use App\Entity\BookCopy;
-use App\Entity\PublishingHouse;
+//use App\Entity\PublishingHouse;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Class Book
  * @package App\Entity
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="BookRepository")
  * @ORM\Table(name="book")
  */
 class Book
@@ -42,7 +42,7 @@ class Book
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=13)
+     * @ORM\Column(type="string", length=20)
      */
     private $isbn;
 
@@ -64,25 +64,29 @@ class Book
 
     /**
      * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="Genre", mappedBy="books")
+     * @ORM\ManyToMany(targetEntity="Genre", inversedBy="books", cascade={"persist", "remove"})
+     * @ORM\JoinTable(name="book_genre")
      */
     private $genresBook;
 
     /**
      * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="Author", mappedBy="books")
+     * @ORM\ManyToMany(targetEntity="Author", inversedBy="books", cascade={"persist", "remove"})
+     * @ORM\JoinTable(name="author_book")
      */
     private $authorsBook;
 
     /**
-     * @ORM\ManyToMany(targetEntity="PublishingHouse", mappedBy="books")
-     */
-    private $publishingHousesBook;
-
-    /**
-     * @ORM\OneToMany(targetEntity="BookCopy", mappedBy="book", cascade={"persist"}))
+     * @ORM\OneToMany(targetEntity="BookCopy", mappedBy="book", cascade={"persist", "remove"}))
      */
     public $bookCopy;
+
+    /**
+     * @var ArrayCollection
+     * @ORM\ManyToMany(targetEntity="Tag", inversedBy="tasks", cascade={"persist", "remove"})
+     * @ORM\JoinTable(name="book_tag")
+     */
+    private $tags;
 
     /**
      * Book constructor.
@@ -101,6 +105,7 @@ class Book
         $this->publicationYear = $publicationYear;
         $this->authorsBook = new ArrayCollection();
         $this->genresBook = new ArrayCollection();
+        $this->tags = new ArrayCollection();
     }
 
     /**
@@ -216,6 +221,24 @@ class Book
     }
 
     /**
+     * @param \App\Entity\Genre $genre
+     */
+    public function addGenresBook(Genre $genre)
+    {
+        if (!$this->tags->contains($genre)) {
+            $this->genresBook->add($genre);
+        }
+    }
+
+    /**
+     * @param \App\Entity\Genre $genre
+     */
+    public function removeGenresBook(Genre $genre)
+    {
+        $this->genresBook->removeElement($genre);
+    }
+
+    /**
      * @return mixed
      */
     public function getAuthorsBook()
@@ -226,19 +249,27 @@ class Book
     /**
      * @param \App\Entity\Author $author
      */
-    public function removeAuthorsBook(Author $author) {
-        $this->authorsBook->removeElement($author);
+    public function addAuthorsBook(Author $author)
+    {
+        if (!$this->isAuthorAlreadyAdded($author)) {
+            $this->authorsBook->add($author);
+        }
     }
 
     /**
      * @param \App\Entity\Author $author
      */
-    public function addAuthorsBook(Author $author) {
-        if ($this->isAuthorAlreadyAdded($author)) {
-            return;
-        }
+    public function removeAuthorsBook(Author $author)
+    {
+        $this->authorsBook->removeElement($author);
+    }
 
-        $this->authorsBook[] = $author;
+    /**
+     * @param mixed $authorsBook
+     */
+    public function setAuthorsBook($authorsBook)
+    {
+        $this->authorsBook = $authorsBook;
     }
 
     /**
@@ -249,27 +280,30 @@ class Book
     {
         return $this->authorsBook->contains($author);
     }
+
     /**
-     * @param mixed $authorsBook
+     * @return ArrayCollection
      */
-    public function setAuthorsBook($authorsBook)
+    public function getTags()
     {
-        $this->authorsBook = $authorsBook;
+        return $this->tags;
     }
 
     /**
-     * @return mixed
+     * @param Tag $tag
      */
-    public function getPublishingHousesBook()
+    public function addTag(Tag $tag)
     {
-        return $this->publishingHousesBook;
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
+        }
     }
 
     /**
-     * @param mixed $publishingHousesBook
+     * @param Tag $tag
      */
-    public function setPublishingHousesBook($publishingHousesBook)
+    public function removeTag(Tag $tag)
     {
-        $this->publishingHousesBook = $publishingHousesBook;
+        $this->tags->removeElement($tag);
     }
 }

@@ -36,7 +36,6 @@ class ProfileUserType extends AbstractType
             ))
             ->add('avatar', FileType::class, array('data_class' => null))
         ;
-
     }
 
     /**

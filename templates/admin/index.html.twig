@@ -1,4 +1,5 @@
-{% extends 'base.html.twig' %}
+{% extends 'layout/page.html.twig' %}
+
 {% block main %}
     <div class="grid-container">
         <div class="grid-x grid-padding-x grid-padding-y">
@@ -12,7 +13,7 @@
                     'currentPage': ''}) }}
             </div>
             <div class="small-12 cell">
-                <a href="{{ path('admin_show_book') }}">Администрирвоание книг</a>
+                <a href="{{ path('admin_show_book') }}">Администрирование книг</a>
             </div>
         </div>
     </div>

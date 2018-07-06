@@ -2,9 +2,8 @@
 
 namespace App\Entity;
 
-use App\Entity\User;
-use App\Entity\BookCopy;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -32,6 +31,7 @@ class Comment
     private $text;
 
     /**
+     * @var ArrayCollection
      * @ORM\ManyToMany(targetEntity="User", mappedBy="favoritesComment")
      */
     private $userFavorites;
@@ -61,7 +61,25 @@ class Comment
     public function __construct()
     {
         $this->date = new \DateTime();
+        $this->userFavorites = new ArrayCollection();
     }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id): void
+    {
+        $this->id = $id;
+    }
+
 
     /**
      * @return mixed

@@ -1,27 +1,23 @@
-{% extends 'base.html.twig' %}
+{% extends 'layout/profile.html.twig' %}
 
-{% block main %}
-    <div class="grid-container">
-        <div class="grid-x grid-padding cell">
-            <div class="small-12 cell">
-                {{ include('profile/_breadcrumbs.html.twig', {
-                    'path': 'profile_page',
-                    'section': 'Профиль',
-                    'entity': user,
-                    'entityId': user.id,
-                    'ditailedPage': user.username,
-                    'currentPage': 'Выши отзывы'}) }}
-            </div>
+{% block breadcrumbs %}
+    {{ include('profile/_breadcrumbs.html.twig', {
+        'path': 'profile_page',
+        'section': 'Профиль',
+        'entity': pageUser,
+        'entityId': pageUser.id,
+        'ditailedPage': pageUser.username,
+        'currentPage': 'Выши отзывы'}) }}
+{% endblock %}
 
-            <div class="small-12 cell">
-                <h2>Ваши отзывы ({{ user.commentsAuthored|length }})</h2>
-            </div>
-            <div class="small-12 cell">
-                {{ include('catalog/_comment-show.html.twig', {
-                    'profilePage' : 'true',
-                    'comments': user.commentsAuthored,
-                    'nullMessage': 'Пока нет отзывов'}) }}
-            </div>
-        </div>
+{% block mainContent %}
+    <div class="small-12 cell">
+        <h2>Ваши отзывы ({{ pageUser.commentsAuthored|length }})</h2>
+    </div>
+    <div class="small-12 cell">
+        {{ include('catalog/_comment-show.html.twig', {
+            'profilePage' : 'true',
+            'comments': pageUser.commentsAuthored,
+            'nullMessage': 'Пока нет отзывов'}) }}
     </div>
 {% endblock %}

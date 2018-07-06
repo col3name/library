@@ -2,12 +2,8 @@
 
 namespace App\Entity;
 
-use App\Entity\User;
-use App\Entity\Book;
-use App\Entity\Comment;
-use App\Entity\Issuance;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -34,7 +30,7 @@ class BookCopy
 
     /**
      * @var Book
-     * @ORM\ManyToOne(targetEntity="Book", inversedBy="bookCopy", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Book", inversedBy="bookCopy", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $book;
@@ -90,24 +86,24 @@ class BookCopy
     private $userReadedBookCopy;
 
     /**
-     * @ORM\OneToMany(targetEntity="Rating", mappedBy="bookCopy")
+     * @ORM\OneToMany(targetEntity="Rating", mappedBy="bookCopy", cascade={"remove"})
      */
     private $rates;
 
     /**
-     * @ORM\OneToMany(targetEntity="Issuance", mappedBy="bookCopy")
+     * @ORM\OneToMany(targetEntity="Issuance", mappedBy="bookCopy", cascade={"remove"})
      */
     private $issuances;
 
     /**
      * @var Comment[]|ArrayCollection
      * @ORM\OrderBy({"date": "DESC"})
-     * @ORM\OneToMany(targetEntity="Comment", mappedBy="bookCopy")
+     * @ORM\OneToMany(targetEntity="Comment", mappedBy="bookCopy", cascade={"remove"})
      */
     private $comments;
 
     /**
-     * @ORM\ManyToMany(targetEntity="User", mappedBy="favoritesComment")
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="favoritesComment", cascade={"remove"})
      */
     private $userFavorites;
 
@@ -250,7 +246,6 @@ class BookCopy
         $this->userReadedBookCopy = $userReadedBookCopy;
     }
 
-
     /**
      * @return \DateTime
      */
@@ -279,7 +274,7 @@ class BookCopy
     {
         $comment->setBookCopy($this);
         if (!$this->comments->contains($comment)) {
-            $this->comments[] = $comment;
+            $this->comments->add($comment);
         }
     }
 
@@ -317,60 +312,10 @@ class BookCopy
     }
 
     /**
-     * @param mixed $issuances
+     * @param mixed $issuance
      */
-    public function setIssuances($issuances): void
+    public function setIssuances($issuance): void
     {
-        $this->issuances = $issuances;
+        $this->issuances = $issuance;
     }
-//
-//    /**
-//     * @return Author[]|ArrayCollection
-//     */
-//    public function getAuthors()
-//    {
-//        return $this->authors;
-//    }
-//
-//    /**
-//     * @param Author|null $author
-//     */
-//    public function addAuthor(?Author $author)
-//    {
-//        $author->setBooks($this);
-//        if (!$this->authors->contains($author)) {
-//            $this->authors->add($author);
-//        }
-//    }
-//
-//    /**
-//     * @param \App\Entity\Author $bookAuthor
-//     */
-//    public function removeAuthor(Author $bookAuthor)
-//    {
-//        $bookAuthor->setBooks(null);
-//        $this->authors->removeElement($bookAuthor);
-//    }
-//
-//    /**
-//     * @return mixed
-//     */
-//    public function getUserFavorites()
-//    {
-//        return $this->userFavorites;
-//    }
-//
-//    /**
-//     * @param $userFavorite
-//     * @return Comment
-//     */
-//    public function addUserFavorites($userFavorite): self
-//    {
-//        if (!$this->userFavorites->contains($userFavorite)) {
-//            $this->userFavorites[] = $userFavorite;
-//            $userFavorite->setCategory($this);
-//        }
-//
-//        return $this;
-//    }
 }

@@ -1,0 +1,29 @@
+{% extends 'layout/profile.html.twig' %}
+
+{% block breadcrumbs %}
+    {{ include('profile/_breadcrumbs.html.twig', {
+        'path': 'profile_page',
+        'section': 'Профиль',
+        'entity': pageUser,
+        'entityId': pageUser.id,
+        'ditailedPage': pageUser.username,
+        'currentPage': 'Прочитанные книги'}) }}
+{% endblock %}
+
+{% block mainContent %}
+    <div class="small-12 cell">
+        <h2>Прочитанные книги ({{ pageUser.readedBookCopy|length }})</h2>
+    </div>
+    <div class="grid-x grid-padding-x cell">
+        {% for bookCopy in pageUser.readedBookCopy %}
+            <div class="small-12 medium-6 large-4 cell">
+                {{ include('home/_book-card.html.twig') }}
+                {% if is_granted('ROLE_USER') %}
+                    <p id="like" data-bookCopyId="{{ bookCopy.id }}"><i class="fi-heart fi-list-size like"></i></p>
+                {% endif %}
+            </div>
+        {% else %}
+            Книг не найдено
+        {% endfor %}
+    </div>
+{% endblock %}

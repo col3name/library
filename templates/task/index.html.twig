@@ -1,0 +1,13 @@
+{% extends 'layout/page.html.twig' %}
+
+{% block content %}
+    <div class="small-12 cell">
+        {% for task in tasks %}
+            <div>
+                <p> {{ task.description }}</p>
+                <a href="{{ path('task-edit', {'id': task.id}) }}">edit</a>
+                <a href="{{ path('task-show', {'id': task.id}) }}">show</a>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

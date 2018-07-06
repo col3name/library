@@ -1,13 +1,29 @@
+{#{% block integer_widget %}#}
+    {#{% set type = type|default('number') %}#}
+    {#{{ block('form_widget_simple') }}#}
+{#{% endblock integer_widget %}#}
+
 {{ form_start(form, {attr: attr|default({})}) }}
-                {{ form_row(form.book.name) }}
-                {{ form_row(form.book.description ) }}
-                {{ form_row(form.book.publicationYear ) }}
-                {{ form_row(form.book.pageNumber ) }}
-                {{ form_row(form.book.isbn) }}
-                {{ form_row(form.count) }}
-                {{ form_row(form.imagePath) }}
-                {{ form_row(form.filePath) }}
-                {{ form_widget(form) }}
+    {% form_theme form 'form/foundation_5_layout.html.twig' %}
+
+    {{ form_row(form.book.name) }}
+    {{ form_row(form.book.description ) }}
+    {{ form_row(form.book.publicationYear ) }}
+    {{ form_row(form.book.pageNumber ) }}
+    {{ form_row(form.book.isbn) }}
+    {{ form_row(form.count) }}
+    {{ form_row(form.imagePath) }}`
+    {{ form_row(form.filePath) }}
+    {{ include('form/choise-field.html.twig', {mapped: 'tag', field: form.book.tags, group: 'Теги'}) }}
+    {{ include('form/choise-field.html.twig', {mapped: 'authorsBook', field: form.book.authorsBook, group: 'Авторы'}) }}
+    {{ include('form/choise-field.html.twig', {mapped: 'genresBook', field: form.book.genresBook, group: 'Жанры'}) }}
+
+    {#<ul class="tags" data-prototype="{{ form_widget(form.book.authorsBook.vars.prototype)|e('html_attr') }}">#}
+        {#{% for author in form.book.authorsBook %}#}
+            {#<li>{{ form_row(author) }}</li>#}
+        {#{% endfor %}#}
+    {#</ul>#}
+{{ form_widget(form) }}
 
 <button type="submit" class="{{ button_css|default("btn btn-primary") }}">
     <button type="submit" class="button">

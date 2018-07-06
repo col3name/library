@@ -1,0 +1,18 @@
+{% extends 'layout/page.html.twig' %}
+
+ {% block breadcrumbs %}
+     {{ include('profile/_breadcrumbs.html.twig', {
+         'path': 'ajax_search',
+         'section': 'Поиск',
+         'entityId': '',
+         'entity': '',
+         'ditailedPage': '',
+         'currentPage': ''
+     }) }}
+ {% endblock %}
+
+{% block content %}
+    <div class="small-12 cell">
+        {{ include('search/_search.html.twig') }}
+    </div>
+{% endblock %}

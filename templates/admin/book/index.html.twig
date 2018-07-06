@@ -1,90 +1,56 @@
-{% extends 'base.html.twig' %}
+{% extends 'layout/page.html.twig' %}
 
-{% block main %}
-    <div class="grid-container">
-        <div class="grid-x grid-padding-x">
-            <div class="small-12 cell">
-                {{ include('profile/_breadcrumbs.html.twig', {
-                    'path': 'admin_page',
-                    'section': 'Админка',
-                    'entityId': '',
-                    'entity': 'а',
-                    'ditailedPage': 'Администрирование книг',
-                    'currentPage': ''}) }}
-            </div>
-            <div class="small-12 cell">
-                <a href="{{ path('book_new') }}"><button class="button">Создать книгу</button></a>
-                <a href="{{ path('new_book_author') }}"><button class="button">Создать автора книги</button></a>
-                <a href="{{ path('new_genre') }}"><button class="button">Добавить жанр</button></a>
-            </div>
-            <div class="small-12 cell">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th data-property-name="id" class="sorted  integer ">
-                            <a href="/admin/?action=list&amp;entity=User&amp;menuIndex=1&amp;submenuIndex=-1&amp;sortField=id&amp;sortDirection=ASC&amp;page=1&amp;referer=%252Fadmin%252F%253Faction%253Dlist%2526entity%253DUser%2526menuIndex%253D1%2526submenuIndex%253D-1%2526sortField%253Did%2526sortDirection%253DDESC%2526page%253D1">
-                                <i class="fa fa-caret-down"></i>
-                                ID
-                            </a>
-                        </th>
-                        <th data-property-name="active" class="  boolean ">
-                            <a href="/admin/?action=list&amp;entity=User&amp;menuIndex=1&amp;submenuIndex=-1&amp;sortField=active&amp;sortDirection=DESC&amp;page=1">
-                                Назавние
-                            </a>
-                        </th>
-                        <th data-property-name="username" class="  string ">
-                            <a href="/admin/?action=list&amp;entity=User&amp;menuIndex=1&amp;submenuIndex=-1&amp;sortField=username&amp;sortDirection=DESC&amp;page=1&amp;referer=%252Fadmin%252F%253Faction%253Dlist%2526entity%253DUser%2526menuIndex%253D1%2526submenuIndex%253D-1%2526sortField%253Did%2526sortDirection%253DDESC%2526page%253D1">
-                                Описание
-                            </a>
-                        </th>
-                        <th data-property-name="email" class="  string ">
-                            <a href="/admin/?action=list&amp;entity=User&amp;menuIndex=1&amp;submenuIndex=-1&amp;sortField=email&amp;sortDirection=DESC&amp;page=1&amp;referer=%252Fadmin%252F%253Faction%253Dlist%2526entity%253DUser%2526menuIndex%253D1%2526submenuIndex%253D-1%2526sortField%253Did%2526sortDirection%253DDESC%2526page%253D1">
-                                image
-                            </a>
-                        </th>
+ {% block breadcrumbs %}
+     {{ include('profile/_breadcrumbs.html.twig', {
+         'path': 'admin_page',
+         'section': 'Админка',
+         'entityId': '',
+         'entity': 'а',
+         'ditailedPage': 'Администрирование книг',
+         'currentPage': ''}) }}
+ {% endblock %}
 
-                        <th data-property-name="contract" class="  string ">
-                            <a href="/admin/?action=list&amp;entity=User&amp;menuIndex=1&amp;submenuIndex=-1&amp;sortField=contract&amp;sortDirection=DESC&amp;page=1&amp;referer=%252Fadmin%252F%253Faction%253Dlist%2526entity%253DUser%2526menuIndex%253D1%2526submenuIndex%253D-1%2526sortField%253Did%2526sortDirection%253DDESC%2526page%253D1">
-                                isbn
-                            </a>
-                        </th>
-                        <th>
-                            <span>Количество страниц</span>
-                        </th>
-                        <th>
-                            <span>Год пубикации</span>
-                        </th>
-                        <th>Кол-во</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for bookCopy in books %}
-                        <tr>
-                            <td>{{ bookCopy.id }}</td>
-                            <td><a href="{{ path('catalog_show', {'id': bookCopy.id}) }}">{{ bookCopy.book.name }}</a></td>
-                            <td>{{ bookCopy.book.description|length > 50 ?bookCopy.book.description|slice(0, 60) ~ '...' : bookCopy.book.description }}</td>
-                            <td><img src="/{{ bookCopy.imagePath }}" alt=""></td>
-                            <td>{{ bookCopy.book.isbn }}</td>
-                            <td>{{ bookCopy.book.pageNumber }}</td>
-                            <td>{{ bookCopy.book.publicationYear }}</td>
-                            <td>{{ bookCopy.count }}</td>
-                            <td>
-                                <a href="{{ path('book_edit', { 'id': bookCopy.id}) }}">edit</a>
-                                <a href="{{ path('book_delete', { 'id': bookCopy.id}) }}">delete</a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <div class="small-12 cell">
-                {#{% if books.haveToPaginate %}#}
-                    {#<div class="navigation text-center">#}
-                        {#{{ pagerfanta(books, { routeName: 'catalog' }) }}#}
-                    {#</div>#}
-                {#{% endif %}#}
-            </div>
-
-        </div>
+{% block content %}
+    <div class="small-12 cell">
+        <a href="{{ path('book_new') }}">
+            <button class="button">Создать книгу</button>
+        </a>
+        {#<a href="{{ path('new_book_author') }}">#}
+            {#<button class="button">Создать автора книги</button>#}
+        {#</a>#}
+        {#<a href="{{ path('new_genre') }}">#}
+            {#<button class="button">Добавить жанр</button>#}
+        {#</a>#}
+    </div>
+    <div class="small-12 cell">
+        <table class="table">
+            <thead>
+            <tr>
+                <th data-property-name="active" class="  boolean ">
+                    Назавние
+                </th>
+                <th data-property-name="id" class="sorted  integer ">
+                    <i class="fi-calendar"></i>   Добавлено
+                </th>
+                <th><i class="fi-widget"></i> Действие</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for bookCopy in books %}
+                <tr>
+                    <td><a href="{{ path('catalog_show', {'id': bookCopy.id}) }}">{{ bookCopy.book.name }}</a></td>
+                    <td>{{ bookCopy.uploadDate|date('d M y h:m:s') }}</td>
+                    <td>
+                        <a href="{{ path('book_edit', { 'id': bookCopy.id}) }}"><i
+                                    class="fi-page-edit font-size-24"></i>   Изменить</a>
+                        <form action="{{ path('book_delete', { id: bookCopy.Id }) }}" method="post">
+                            <input type="hidden" name="token" value="{{ csrf_token('delete-item') }}"/>
+                            <button type="submit"><i class="fi-page-delete font-size-24"></i>   Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}

@@ -1,50 +1,41 @@
-{% extends 'base.html.twig' %}
+{% extends 'layout/profile.html.twig' %}
 
-{% block main %}
+{% block breadcrumbs %}
+    {{ include('profile/_breadcrumbs.html.twig', {
+        'path': 'profile_page',
+        'section': 'Профиль',
+        'entity': pageUser,
+        'entityId': pageUser.id,
+        'ditailedPage': pageUser.username,
+        'currentPage': 'Книги у меня'}) }}
+{% endblock %}
+
+{% block mainContent %}
+    <div class="small-12 cell">
+        <h2>Книги у меня ({{ takenBooks|length }})</h2>
+    </div>
     <div class="grid-container">
-        <div class="grid-x grid-padding cell">
-            <div class="small-12 cell">
-                {{ include('profile/_breadcrumbs.html.twig', {
-                    'path': 'profile_page',
-                    'section': 'Профиль',
-                    'entity': user,
-                    'entityId': user.id,
-                    'ditailedPage': user.username,
-                    'currentPage': 'Книги и меня'}) }}
-            </div>
-            {{ include('profile/_aside.html.twig', {'pageUser': user}) }}
-
-            <div class="small-12 large-9  cell">
-                <div class="small-12 cell">
-                    <h2>Книги у меня ({{ takenBooks|length }})</h2>
-                </div>
-                <div class="grid-container">
-                    <div id="showBooks" class="grid-x grid-padding cell">
-                        {% for takenBook in takenBooks %}
-                            <div class="small-12 medium-6 large-4 cell">
-                                <img class="book-image" src="/{{ takenBook.imagePath }}" alt="book image">
-                                <h5>
-                                    <a href="{{ path('catalog_show', {'id': takenBook.bookCopyId}) }}">{{ takenBook.bookName }}</a>
-                                </h5>
-                                <div>
-                                    <time>Когда взял: {{ takenBook.issueDate|date("m/d/Y    ") }}</time>
-                                    <time>Крайний срок сдачи: {{ takenBook.deadlineDate|date("m/d/Y") }}</time>
-                                </div>
-                                <p id="showMessage" class="hide"></p>
-                                <input type="button" class="button" id="returnBook" value="Вернуть книгу"
-                                       data-issuanceId="{{ takenBook.issuanceId }}"
-                                >
-                            </div>
-                        {% else %}
-                            <p>Книги не найдены</p>
-                        {% endfor %}
-
-                        {#{{ include('profile/_history-issuance.html.twig', {'issuances':  takenBooks}) }}#}
+        <div id="showBooks" class="grid-x grid-padding cell">
+            {% for takenBook in takenBooks %}
+                <div class="small-12 medium-6 large-4 cell">
+                    <img class="book-image" src="/{{ takenBook.imagePath }}" alt="book image">
+                    <h5>
+                        <a href="{{ path('catalog_show', {'id': takenBook.bookCopyId}) }}">{{ takenBook.bookName }}</a>
+                    </h5>
+                    <div>
+                        <time>Когда взял: {{ takenBook.issueDate|date("m/d/Y    ") }}</time>
+                        <time>Крайний срок сдачи: {{ takenBook.deadlineDate|date("m/d/Y") }}</time>
                     </div>
+                    <p id="showMessage" class="hide"></p>
+                    <input type="button" class="button" id="returnBook" value="Вернуть книгу"
+                           data-issuanceId="{{ takenBook.issuanceId }}"
+                    >
                 </div>
-                {#<p id="showMore" class="button" data-userId="{{ user.id }}" data-page="{{ page }}">Показать еще</p>#}
-                {#<p id="error" class="error-not-found not-found-animate"></p>#}
-            </div>
+            {% else %}
+                <p>Книги не найдены</p>
+            {% endfor %}
+
+            {#{{ include('profile/_history-issuance.html.twig', {'issuances':  takenBooks}) }}#}
         </div>
     </div>
 {% endblock %}

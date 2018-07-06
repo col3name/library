@@ -2,30 +2,33 @@
 
 namespace App\Controller;
 
+use App\Entity\BookCopy;
 use App\Entity\Comment;
 use App\Entity\Issuance;
 use App\Entity\Rating;
-use App\Entity\BookCopy;
 use App\Entity\User;
+
 use App\Form\CommentType;
-use App\Form\RatingType;
+
 use App\Repository\AuthorRepository;
-use App\Repository\BookCopyRepository;
 use App\Repository\BookRepository;
+use App\Repository\BookCopyRepository;
 use App\Repository\GenreRepository;
-use App\Repository\UserRepository;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Config\Definition\Exception\Exception;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+
 use Symfony\Component\Routing\Annotation\Route;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * @Route("/catalog")
@@ -48,11 +51,13 @@ class CatalogController extends Controller
         if ($request->isXmlHttpRequest()) {
             $options = $this->parseFilterOptions($request);
             $result = $this->getData($bookCopyRepository, $page, $limit, $options);
+
             return $this->json($result);
         }
-        $options = $this->parseFilterOptions($request);
 
+        $options = $this->parseFilterOptions($request);
         $parameters = $this->getCatalogPageParameters($bookCopyRepository, $genreRepository, $authorRepository, $page, $limit, $options);
+
         return $this->render('catalog/index.html.twig', $parameters);
     }
 
@@ -100,13 +105,16 @@ class CatalogController extends Controller
 
             if (!$existFreeBooks || $userHasThisBook) {
                 $result['result'] = 'success';
+                $this->addFlash('failed', 'Книгу не удалось взять');
 
                 return $this->json($result);
             }
 
             $issuance = $this->setNewIssuance($bookCopy, $user);
             $this->saveEntity($issuance);
-            $json['result']= 'good';
+            $json['result'] = 'good';
+
+            $this->addFlash('success', 'Книга взята');
 
             return $this->json($json);
         }
@@ -114,10 +122,16 @@ class CatalogController extends Controller
         return $this->redirectToRoute('catalog_page');
     }
 
-    private function existFreeBooks(BookCopyRepository $bookCopyRepository, BookCopy $bookCopy) {
+    /**
+     * @param BookCopyRepository $bookCopyRepository
+     * @param BookCopy $bookCopy
+     * @return bool
+     */
+    private function existFreeBooks(BookCopyRepository $bookCopyRepository, BookCopy $bookCopy)
+    {
         $bookCopyId = $bookCopy->getId();
-        $countFreeBooks = $this->getCountFreeBooks($bookCopyRepository, $bookCopyId);
-        return $countFreeBooks > 0;
+
+        return $this->getCountFreeBooks($bookCopyRepository, $bookCopyId) > 0;
     }
 
     /**
@@ -155,10 +169,12 @@ class CatalogController extends Controller
      * @param BookCopyRepository $repository
      * @return Response
      */
-    public function addFavoritesBook(Request $request, BookCopy $bookCopy, BookCopyRepository $repository)
+    public function addFavoritesBookCopy(Request $request, BookCopy $bookCopy, BookCopyRepository $repository)
     {
         if ($request->isXmlHttpRequest()) {
-            /** @var User $user */
+            /**
+             * @var User $user
+             */
             $user = $this->getUser();
 
             $json = $this->handleLikeAction($bookCopy, $user);
@@ -174,6 +190,40 @@ class CatalogController extends Controller
         $json[] = $bookCopyId;
 
         return $this->json($json);
+    }
+
+    /**
+//     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
+     * @Route("/{id}/change-readed-book", requirements={"\d+"}, name="change_readed_book")
+     * @param Request $request
+     * @param BookCopy $bookCopy
+     * @return JsonResponse
+     */
+    public function addReadedBookCopy(Request $request, BookCopy $bookCopy)
+    {
+        if ($request->isXmlHttpRequest()) {
+            /**
+             * @var User $user
+             */
+            $user = $this->getUser();
+            if ($user->bookCopyReaded($bookCopy)) {
+                $user->removeReadedBookCopy($bookCopy);
+                $result['action'] = 'remove';
+            } else {
+                $result['action'] = 'add';
+                $user->addReadedBookCopy($bookCopy);
+            }
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($user);
+            $entityManager->flush();
+            $result['result'] = 'success';
+
+            return $this->json($result);
+        }
+
+        $result['action'] = 'no-action';
+        return $this->json($result);
     }
 
     /**
@@ -235,8 +285,7 @@ class CatalogController extends Controller
      * @param BookCopy $bookCopy
      * @return Response
      */
-    public
-    function commentForm(BookCopy $bookCopy): Response
+    public function commentForm(BookCopy $bookCopy): Response
     {
         $form = $this->createForm(CommentType::class);
 
@@ -246,9 +295,11 @@ class CatalogController extends Controller
         ]);
     }
 
-
-    private
-    function getRealEntities($entities)
+    /**
+     * @param $entities
+     * @return array
+     */
+    private  function getRealEntities($entities)
     {
         $realEntities = [];
         foreach ($entities as $entity) {
@@ -301,6 +352,7 @@ class CatalogController extends Controller
             $result['entities'] = $this->getRealEntities($books);
             $result['countAll'] = $countAll;
             $result['countItem'] = $limit;
+            $result['authorId'] = $options['authorId'];
         }
         return $result;
     }
@@ -403,6 +455,8 @@ class CatalogController extends Controller
         $issuanceId = $this->findIssuanceId($whoHasBooks, $userId);
         $bookRated = $this->getBookedRated($bookCopyRepository, $bookCopyId, $userId);
         $countLike = $bookCopyRepository->countLike($bookCopy->getId());
+        $isReadedBookCopy = $this->isReadedBookCopy($bookCopy);
+        $recomendedBooks = $bookCopyRepository->findForCatalog(1, 4, [ 'sortField' => 'publicationYear']);
 
         return [
             'bookCopy' => $bookCopy,
@@ -412,7 +466,9 @@ class CatalogController extends Controller
             'isUserHasBooks' => $isUserHasBooks,
             'issuanceId' => $issuanceId,
             'bookRated' => $bookRated,
-            'countLike' => $countLike
+            'countLike' => $countLike,
+            'isReadedBookCopy' => $isReadedBookCopy,
+            'recomendedBooks' => $recomendedBooks,
         ];
     }
 
@@ -483,13 +539,13 @@ class CatalogController extends Controller
     private function handleLikeAction(BookCopy $bookCopy, User $user)
     {
         if ($user->bookCopyLiked($bookCopy)) {
-            $json['action'] = 'unlike';
+            $result['action'] = 'unlike';
             $user->removeFavoritesBookCopy($bookCopy);
         } else {
-            $json['action'] = 'like';
+            $result['action'] = 'like';
             $user->addFavoritesBookCopy($bookCopy);
         }
-        return $json;
+        return $result;
     }
 
     /**
@@ -573,5 +629,20 @@ class CatalogController extends Controller
     {
         $whoHasBooks = $bookCopyRepository->whoHasBookCopy($bookCopyId);
         return $this->isExistField($userId, $whoHasBooks, 'readerId');
+    }
+
+    /**
+     * @param BookCopy $bookCopy
+     * @return bool
+     */
+    private function isReadedBookCopy(BookCopy $bookCopy)
+    {
+        $user = $this->getUser();
+
+        if (!isset($user)) {
+           return false;
+        }
+
+        return $user->bookCopyReaded($bookCopy);
     }
 }

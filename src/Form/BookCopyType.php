@@ -4,10 +4,10 @@ namespace App\Form;
 
 use App\Entity\BookCopy;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 /**
  * Class BookCopyType
@@ -29,53 +29,16 @@ class BookCopyType extends AbstractType
                 ]
             ])
             ->add('book', BookType::class)
-            ->add('imagePath', FileType::class, array('data_class' => null))
+            ->add('imagePath', FileType::class,[
+//                'mapped' => false,
+//                'data_class' => null,
+//                'data_class' => 'Symfony\Component\HttpFoundation\File\File',
+                'property_path' => 'imagePath',
+                'required' => false,
+                'empty_data' => '/image/camera_200.png'
+            ])
             ->add('filePath', FileType::class, array('data_class' => null))
         ;
-
-//        $builder
-//            ->add('name', TextType::class, [
-//                'attr' => ['autofocus' => true],
-//            ])
-//            ->add('description', TextareaType::class, [
-//                'attr' => array('rows' => '5'),
-//            ])
-//            ->add('isbn', TextType::class, [
-//                'attr' => [
-//                    'minlength' => 11,
-//                    'maxlength' => 11,
-//                ],
-//            ])
-////            ->add('imagePath', FileType::class, array('label' => 'Choose JPEG file'))
-
-//            ->add('publicationYear', IntegerType::class, [
-//                'data' => 0,
-//                'attr' => [
-//                    'min' => -3000,
-//                    'max' => 4000,
-//                    'maxLength' => 4
-//                ],
-//            ])
-//            ->add('genres', GenreType::class)
-//            ->add('tags', TagsInputType::class, [
-//                'label' => 'label.tags',
-//                'required' => false,
-//            ])
-        ;
-//            ->add('genres', GenreType::class);
-
-//        $builder->get('imagePath')->addModelTransformer(new CallBackTransformer(
-//        /**
-//         * @param $imageUrl
-//         * @return mixed
-//         */
-//            function($imageUrl) {
-//                return null;
-//            },
-//            function($imageUrl) {
-//                return $imageUrl;
-//            }
-//        ));
     }
 
     /**

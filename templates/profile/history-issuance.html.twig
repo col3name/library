@@ -1,36 +1,24 @@
-{% extends 'base.html.twig' %}
+{% extends 'layout/profile.html.twig' %}
 
-{% block main %}
-<div class="grid-container">
-    <div class="grid-x grid-padding cell">
-        <div class="small-12 cell">
-            {{ include('profile/_breadcrumbs.html.twig', {
-                'path': 'profile_page',
-                'section': 'Профиль',
-                'entity': user,
-                'entityId': user.id,
-                'ditailedPage': user.username,
-                'currentPage': 'История заказов'}) }}
-        </div>
-        {{ include('profile/_aside.html.twig', {'pageUser': user }) }}
-        <div class="small-12 medium-12 large-9 cell">
-            <div class="grid-container">
-                <div class="grid-x grid-padding-x cell">
-                    <div class="small-12 cell">
-                        <h2>История заказов</h2>
-                        <div class="grid-container">
-                            <div id="showBooks" class="grid-x grid-padding cell">
-                                {{ include('profile/_history-issuance.html.twig', {'issuances':  takenBooks}) }}
-                            </div>
-                        </div>
-                        <p id="showMore" class="button" data-userId="{{ user.id }}" data-page="{{ page }}">Показать
-                            еще</p>
-                        <p id="error" class="error-not-found not-found-animate"></p>
-                    </div>
-                </div>
+{% block breadcrumbs %}
+    {{ include('profile/_breadcrumbs.html.twig', {
+        'path': 'profile_page',
+        'section': 'Профиль',
+        'entity': pageUser,
+        'entityId': pageUser.id,
+        'ditailedPage': pageUser.username,
+        'currentPage': 'История заказов'}) }}
+{% endblock %}
+
+{% block mainContent %}
+    <div class="small-12 cell">
+        <h2>История заказов</h2>
+        <div class="grid-container">
+            <div id="showBooks" class="grid-x grid-padding cell">
+                {{ include('profile/_history-issuance.html.twig', {'issuances':  takenBooks}) }}
             </div>
         </div>
-
+        <p id="showMore" class="button" data-userId="{{ pageUser.id }}" data-page="{{ page }}">Показать еще</p>
+        <p id="error" class="error-not-found not-found-animate"></p>
     </div>
-</div>
 {% endblock %}

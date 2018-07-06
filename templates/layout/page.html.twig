@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    {% include 'header.html.twig' %}
+{% endblock %}
+
+{% block main %}
+        <div class="grid-container">
+            <div class="grid-x grid-padding-x cell">
+                <div class="small-12 cell">
+                    {{ include('layout/_flash_messages.html.twig') }}
+                </div>
+                <div class="small-12 cell">
+                    {% block breadcrumbs %}{% endblock %}
+                </div>
+                {% block aside %}{% endblock %}
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+{% endblock %}
+
+{% block footer %}
+    {% include 'footer.html.twig' %}
+{% endblock %}

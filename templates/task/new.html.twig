@@ -1,0 +1,75 @@
+{% extends 'layout/page.html.twig' %}
+
+{% block content %}
+
+    {#<div class="pan1">#}
+    {#<div>sdfdasfasd</div>#}
+    {#<div id="resize"></div>#}
+    {#</div>#}
+    {#<div class="pan2">#}
+    {#<h2>#}
+    {#Текст для примера:#}
+    {#</H2>#}
+    {#<br>#}
+    {#<h3>#}
+    {#Добиваются успеха лишь те, кто всегда стремится помогать другим. Те, кто ищет лишь свою выгоду, обречены на поражение.#}
+    {#</h3>#}
+    {#<div id="debug"></div>#}
+    {#</div>#}
+    <div class="small-12 cell">
+        <div class="dropdown-container" data-dropdown="test">test helo</div>
+
+        {{ form_start(form) }}
+        {% form_theme form 'form/foundation_5_layout.html.twig' %}
+
+        {{ form_row(form.description) }}
+        {#{{ form_row(form.tags ) }}#}
+
+        {{ include('form/choise-field.html.twig', {mapped: 'tag', field: form.tags, group: 'Теги'}) }}
+        {{ include('form/choise-field.html.twig', {mapped: 'authors', field: form.authors, group: 'Авторы'}) }}
+        {#<div class="dropdown-container" data-dropdown-container="tag">#}
+            {#<div class="dropdown-button noselect" data-dropdown-button="tag">#}
+                {#<p><span class="dropdown-label">Tags</span>#}
+                    {#<span class="dropdown-quantity">(<span class="quantity">Any</span>)</span>#}
+                    {#<i class="fa fa-filter"></i></p>#}
+            {#</div>#}
+            {#<div id="dropDownList" class="dropdown-list" data-dropdown-list="tag" style="display: none;">#}
+                {#<input type="search" placeholder="Search states" class="dropdown-search"/>#}
+                {#<div class="choices">#}
+                    {#{{ form_widget(form.tags) }}#}
+                {#</div>#}
+            {#</div>#}
+        {#</div>#}
+        {#{{ form_row(form.authors) }}#}
+        {{ form_widget(form.submit) }}
+
+        {#<div class="instructions">(Click to expand and select states to filter)</div>#}
+        {#<div class="dropdown-container">#}
+        {#<div class="dropdown-button noselect">#}
+        {#<div class="dropdown-label">States</div>#}
+        {#<div class="dropdown-quantity">(<span class="quantity">Any</span>)</div>#}
+        {#<i class="fa fa-filter"></i>#}
+        {#</div>#}
+        {#<div class="dropdown-list" style="display: none;">#}
+        {#<input type="search" placeholder="Search states" class="dropdown-search"/>#}
+        {#<ul id="dropDownList"></ul>#}
+        {#</div>#}
+        {#</div>#}
+        {#<h3>Tags</h3>#}
+        {#<ul class="tags" data-prototype="{{ form_widget(form.tags.vars.prototype)|e('html_attr') }}">#}
+        {#{% for tag in form.tags %}#}
+        {#<li>{{ form_row(tag) }}</li>#}
+        {#{% endfor %}#}
+        {#</ul>#}
+
+        {{ form_end(form) }}
+        {#<form action="{{ path('search-tag') }}" method="GET">#}
+        {#<input type="search" id="searchTag" name="searchTag" placeholder="Введите назавние тега">#}
+        {#<input type="submit" value="найти">#}
+        {#</form>#}
+        {#<span id="searchTagResult"></span>#}
+    </div>
+    <div class="small-12 cell">
+        <a href="{{ path('task-page') }}">task-page</a>
+    </div>
+{% endblock %}

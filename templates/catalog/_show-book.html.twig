@@ -1,39 +1,33 @@
-<h2>{{ bookCopy.book.name }}</h2>
+<h3>{{ bookCopy.book.name }}</h3>
 <div>
     {% if is_granted('ROLE_USER') %}
-        <a href="{{ path('liked_books') }}">Избранные</a>
-        <span id="like" data-bookCopyId="{{ bookCopy.id }}"><i class="fi-heart fi-list-size like"></i><span
-                    id="countLike">{% for like in countLike %}
+        <ul class="book-stats">
+            <li class="book-stats-item"><a href="">{{ bookCopy.comments|length }} отзывов</a></li>
+            <li class="book-stats-item"> <span id="like" data-bookCopyId="{{ bookCopy.id }}"><i
+                            class="fi-heart fi-size-18 like"></i><span
+                            id="countLike">{% for like in countLike %}
                 {{ like.countLike }}
             {% endfor %}</span>
-            </span>
-        {% if bookRated == false %}
-            <span id="bookRating"></span>
-        {% endif %}
+            </span></li>
+            <li class="book-stats-item"> <span id="readedBook" data-bookCopyId="{{ bookCopy.id }}">
+                <i class="{% if isReadedBookCopy %} readed {% endif %} fi-book fi-size-18 like"></i></span>
+            </li>
+            <li class="book-stats-item"> {% if bookRated == false %}
+                    <span id="bookRating"></span>
+                {% endif %}</li>
+            <li class="book-stats-item"><span>Рейтинг: {{ average }}</span></li>
+        </ul>
+        {#<a href="{{ path('liked_books') }}">Избранные</a>#}
     {% endif %}
-
-    <span>Рейтинг: {{ average }}  </span>
 </div>
-<hr>
 <p>ISBN: {{ bookCopy.book.isbn }}</p>
 <p>Количество страниц: {{ bookCopy.book.pageNumber }}</p>
 <p>Год публикации: {{ bookCopy.book.publicationYear }}</p>
 
-{% if bookCopy.book.genresBook|length > 0 %}
-    <p>Жанры:
-        {% for genre in bookCopy.book.genresBook %}
-            <a href="{{ path('catalog_page', {'genreId': genre.id}) }}">{{ genre.name }}</a>
-        {% endfor %}
-    </p>
-{% endif %}
+{{ include('catalog/_show-name.html.twig', {title: 'Авторы', entities: bookCopy.book.authorsBook}) }}
+{{ include('catalog/_show-name.html.twig', {title: 'Теги', entities: bookCopy.book.tags}) }}
+{{ include('catalog/_show-name.html.twig', {title: 'Жанры', entities: bookCopy.book.genresBook}) }}
 
-{% if bookCopy.book.authorsBook|length > 0 %}
-    <p>Авторы:
-        {% for author in bookCopy.book.authorsBook %}
-            <a href="{{ path('catalog_page', {'authorId': author.id}) }}"> {{ author.name }}</a>
-        {% endfor %}
-    </p>
-{% endif %}
 {% if bookCopy.filePath|length > 4 %}
     <p><a href="{{ path('download_book_file', { 'id': bookCopy.id }) }}"><span><i class="fi-list-size fi-download"></i> Скачать pdf</span></a>
     </p>
@@ -55,6 +49,19 @@
         {% endif %}
     {% endif %}
     {% if is_granted('ROLE_ADMIN') %}
-        <a class="button" href="{{ path('book_edit', {'id': bookCopy.Id }) }}">Редактировать</a>
+        <a class="button small" href="{{ path('book_edit', { 'id': bookCopy.id}) }}"><i class="fi-page-edit font-size-24"></i>
+            Редактировать</a>
+        <form action="{{ url('book_delete', { id: bookCopy.Id }) }}" method="post">
+            <input type="hidden" name="token" value="{{ csrf_token('delete-item') }}"/>
+            <button class="button" type="submit"><i class="fi-page-delete font-size-24"></i> Удалить</button>
+        </form>
+        {#<a class="button" href="{{ path('book_edit', {'id': bookCopy.Id }) }}">Редактировать</a>#}
+
+        {#<form action="{{ url('book_delete', { id: bookCopy.Id }) }}" method="post">#}
+        {#<input type="hidden" name="token" value="{{ csrf_token('delete-item') }}" />#}
+        {#<button type="submit">Удалить item</button>#}
+        {#</form>#}
+
+        {#<button id="deleteBook" data-bookCopyId="{{ bookCopy.Id }}" class="button">Удалить</button>#}
     {% endif %}
 {% endif %}
