@@ -29,7 +29,7 @@ class Author
 
     /**
      * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="Book", mappedBy="authorsBook", cascade={"persist", "remove"})
+     * @ORM\ManyToMany(targetEntity="Book", mappedBy="authorsBook", cascade={"persist"})
      */
     private $books;
 

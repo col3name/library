@@ -203,6 +203,7 @@ class ProfileController extends Controller
     /**
      * @Route("/{id}/settings", requirements={"\d+"}, name="edit-profile")
      * @Security("has_role('ROLE_USER')")
+     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
      * @Method({"GET", "POST"})
      * @param Request $request
      * @param User $user
@@ -237,6 +238,28 @@ class ProfileController extends Controller
         ];
 
         return $this->render('profile/edit.html.twig', $redirectParameters);
+    }
+
+    /**
+     * @Route("/profile/delete-user/{id}", requirements={"\d+"}, name="profile-delete")
+     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
+     * @Security("has_role('ROLE_USER')")
+     * @param User $user
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function delete(User $user) {
+        if (!$this->isAuthorizedUser($user)) {
+            return $this->redirectToRoute('login');
+        }
+
+        $this->get('security.token_storage')->setToken(null);
+        $username = $user->getUsername();
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($user);
+        $entityManager->flush();
+        $this->addFlash('success', 'Профиль "' . $username. '" удален');
+
+        return $this->redirectToRoute('login');
     }
 
     /**

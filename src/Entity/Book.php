@@ -64,14 +64,14 @@ class Book
 
     /**
      * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="Genre", inversedBy="books", cascade={"persist", "remove"})
+     * @ORM\ManyToMany(targetEntity="Genre", inversedBy="books", cascade={"persist"})
      * @ORM\JoinTable(name="book_genre")
      */
     private $genresBook;
 
     /**
      * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="Author", inversedBy="books", cascade={"persist", "remove"})
+     * @ORM\ManyToMany(targetEntity="Author", inversedBy="books", cascade={"persist"})
      * @ORM\JoinTable(name="author_book")
      */
     private $authorsBook;
@@ -83,7 +83,7 @@ class Book
 
     /**
      * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="Tag", inversedBy="tasks", cascade={"persist", "remove"})
+     * @ORM\ManyToMany(targetEntity="Tag", inversedBy="tasks", cascade={"persist"})
      * @ORM\JoinTable(name="book_tag")
      */
     private $tags;

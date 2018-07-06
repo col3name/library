@@ -10,6 +10,7 @@ security:
                 class: App\Entity\User
                 property: username
         in_memory: { memory: ~ }
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|image|js)/
@@ -19,6 +20,12 @@ security:
             pattern: ^/
             http_basic: ~
             provider: our_db_provider
+
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                path: /
+
             form_login:
                 check_path: login
                 login_path: login
@@ -40,4 +47,6 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
          - { path: ^/admin, roles: ROLE_ADMIN }
-#         - { path: ^/profile, roles: ROLE_USER }
+         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/register, roles: IS_AUTHENTICATED_ANONYMOUSLY  }
+         - { path: ^/profile, roles: ROLE_USER }

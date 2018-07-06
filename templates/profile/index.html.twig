@@ -34,7 +34,6 @@
                 </div>
             </div>
 
-
             {{ form_start(avatarEdit) }}
             {{ form_widget(avatarEdit.avatar) }}
             <img src="" data-show-preview="avatar" alt="">
@@ -55,13 +54,6 @@
             </button>
         </div>
 
-        <div class="reveal" id="showImage" data-reveal data-reset-on-close="true" data-animation-in="fade-in" data-animation-out="fade-out">
-            <img data-open="showImage" src="{{ pageUser.avatar }}" alt="avatar">
-            <button class="close-button" data-close aria-label="Close modal" type="button">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-
         <div class="profile-avatar">
             {% if pageUser.avatar|length == 0 %}
                 <div class="profile-avatar-image">
@@ -73,6 +65,14 @@
             {% else %}
                 <p class="" data-open="deleteAvatarModal"><i class="fi-x"></i></p>
                 <div class="profile-avatar-image">
+
+                    <div class="reveal" id="showImage" data-reveal data-reset-on-close="true" data-animation-in="fade-in" data-animation-out="fade-out">
+                        <img data-open="showImage" src="{{ pageUser.avatar }}" alt="avatar">
+                        <button class="close-button" data-close aria-label="Close modal" type="button">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
                     <img data-open="showImage" src="{{ pageUser.avatar }}" alt="avatar">
                 </div>
                 <div class="hover-menu">

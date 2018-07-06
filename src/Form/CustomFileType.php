@@ -18,18 +18,17 @@ class CustomFileType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('avatar', FileType::class, [
-            'data_class' => null,
-            'attr' => [
-                'data-upload-image' => 'avatar'
-            ]
-        ])
+                'data_class' => null,
+                'attr' => [
+                    'data-upload-image' => 'avatar'
+                ]
+            ])
             ->add('submit', SubmitType::class, [
                 'label' => 'сохранить',
                 'attr' => [
                     'class' => 'button fi-upload fi-left'
                 ],
-            ])
-        ;
+            ]);
 //        $builder->addViewTransformer(new UploadedFileViewTransformer());
     }
 

@@ -23,6 +23,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
  * Class AdminController
  * @package App\Controller
  * @Security("has_role('ROLE_ADMIN')")
+ * @Security("has_role('IS_AUTHENTICATED_FULLY')")
  */
 class AdminController extends Controller
 {
@@ -60,6 +61,8 @@ class AdminController extends Controller
      * @param Book $book
      * @param AuthorRepository $authorRepository
      * @return Response
+     * @Security("has_role('IS_AUTHENTICATED_FULLY')")
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/add-book", name="addBook")a
      */
     public function addAuthorForBook(Request $request, Book $book, AuthorRepository $authorRepository)
@@ -91,6 +94,7 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/book/edit/{id}", requirements={"id": "\d+"}, name="book_edit")
+     * @Security("has_role('IS_AUTHENTICATED_FULLY')")
      * @Security("has_role('ROLE_ADMIN')")
      * @Method({"GET", "POST"})
      * @param Request $request
@@ -104,12 +108,12 @@ class AdminController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            dump($bookCopy);
             $this->persistEntity($bookCopy);
 
 //            $entityManager =  $this->getDoctrine()->getManager();
 //            $entityManager->flush();
-            $this->addFlash('success', 'Книга обновлена');
+            $message = 'Книга "' . $bookCopy->getBook()->getName() . '" обновлена';
+            $this->addFlash('success', $message);
 
             return $this->redirectToRoute('admin_show_book');
         }
@@ -122,6 +126,7 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/book/newBook", requirements={"id": "\d+"}, name="book_new")
+     * @Security("has_role('IS_AUTHENTICATED_FULLY')")
      * @Security("has_role('ROLE_ADMIN')")
      * @Method({"GET", "POST"})
      * @param Request $request
@@ -135,7 +140,8 @@ class AdminController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->addFlash('success', 'post.updated_successfully');
+            $message = 'Добавлена новая книга "' . $bookCopy->getBook()->getName() . '"';
+            $this->addFlash('success', $message);
             $this->persistEntity($bookCopy);
 
             return $this->redirectToRoute('admin_show_book', [
@@ -163,8 +169,10 @@ class AdminController extends Controller
     {
 //        $submittedToken = $request->request->get('token');
 
+        $bookName = $bookCopy->getBook()->getName();
         $this->removeEntity($bookCopy);
-        $this->addFlash('success', 'Книга удалена');
+
+        $this->addFlash('success', 'Книга "' . $bookName . '" удалена');
 
         return $this->redirectToRoute('admin_show_book');
     }

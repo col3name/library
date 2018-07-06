@@ -660,7 +660,7 @@ class Hamburger {
 
 class Alert {
     constructor($tag) {
-        this.tag = $tag;
+        this.tag = $($tag);
     }
 
     _delete() {
@@ -707,7 +707,7 @@ class FileUploadPreview {
 function readURLS(input) {
     if (input.files && input.files[0]) {
 
-        var reader = new FileReader();
+        let reader = new FileReader();
 
         reader.onload = function(e) {
             $('.image-upload-wrap').hide();

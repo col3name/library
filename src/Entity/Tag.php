@@ -32,7 +32,7 @@ class Tag
 
     /**
      * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="Book", mappedBy="tags", cascade={"persist", "remove"})
+     * @ORM\ManyToMany(targetEntity="Book", mappedBy="tags", cascade={"persist"})
      */
     private $books;
 

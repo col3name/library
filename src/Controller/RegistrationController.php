@@ -32,7 +32,7 @@ class RegistrationController extends Controller
 
             $this->save($user);
 
-            return $this->redirectToRoute('homepage');
+            return $this->redirectToRoute('login');
         }
 
         $renderParameters = ['form' => $form->createView()];

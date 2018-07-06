@@ -16,13 +16,14 @@
             <button class="button">Создать книгу</button>
         </a>
         {#<a href="{{ path('new_book_author') }}">#}
-            {#<button class="button">Создать автора книги</button>#}
+        {#<button class="button">Создать автора книги</button>#}
         {#</a>#}
         {#<a href="{{ path('new_genre') }}">#}
-            {#<button class="button">Добавить жанр</button>#}
+        {#<button class="button">Добавить жанр</button>#}
         {#</a>#}
     </div>
     <div class="small-12 cell">
+        <h3>Книги ({{ books|length }})</h3>
         <table class="table">
             <thead>
             <tr>
@@ -30,23 +31,25 @@
                     Назавние
                 </th>
                 <th data-property-name="id" class="sorted  integer ">
-                    <i class="fi-calendar"></i>   Добавлено
+                    <i class="fi-photo fi-left"></i>Превью
                 </th>
-                <th><i class="fi-widget"></i> Действие</th>
+                <th data-property-name="id" class="sorted  integer ">
+                    <i class="fi-calendar fi-left"></i>Дата добавления
+                </th>
+                <th><i class="fi-widget fi-left"></i>Действие</th>
             </tr>
             </thead>
             <tbody>
             {% for bookCopy in books %}
                 <tr>
                     <td><a href="{{ path('catalog_show', {'id': bookCopy.id}) }}">{{ bookCopy.book.name }}</a></td>
+                    <td><img class="sm-image" src="/{{ bookCopy.imagePath }}" alt="image-{{ bookCopy.book.name }}"></td>
                     <td>{{ bookCopy.uploadDate|date('d M y h:m:s') }}</td>
                     <td>
-                        <a href="{{ path('book_edit', { 'id': bookCopy.id}) }}"><i
-                                    class="fi-page-edit font-size-24"></i>   Изменить</a>
-                        <form action="{{ path('book_delete', { id: bookCopy.Id }) }}" method="post">
-                            <input type="hidden" name="token" value="{{ csrf_token('delete-item') }}"/>
-                            <button type="submit"><i class="fi-page-delete font-size-24"></i>   Удалить</button>
-                        </form>
+                        <a href="{{ path('book_edit', { 'id': bookCopy.id}) }}">
+                            <i class="fi-page-edit font-size-24 fi-left"></i>Изменить</a>
+
+                        {{ include('admin/book/_book-delete.html.twig') }}
                     </td>
                 </tr>
             {% endfor %}

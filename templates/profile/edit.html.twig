@@ -13,6 +13,10 @@
                     'currentPage': 'Найстроки'}) }}
             </div>
             <div class="small-12 cell">
+                <a href="{{ path('profile-delete', {'id': user.id}) }}">Удалить профиль</a>
+            </div>
+
+            <div class="small-12 cell">
                 {{ form_start(form) }}
                 {{ form_row(form.email) }}
                 {{ form_row(form.username) }}
