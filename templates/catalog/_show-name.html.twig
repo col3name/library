@@ -1,7 +1,13 @@
 {#{% for entity in entities %}#}
     {#<span>{{ entity.name }} </span>#}
 {#{% endfor %}#}
-<p>{{ title }}:
+<p>
+    {% if icon is defined %}
+        <span class="{{ icon }} fi-left fi-size-18">{{ title }}:</span>
+    {% else %}
+        {{ title }}
+    {% endif %}
+
     {% if entities|length == 0 %}
         Пока отсутствуют
     {% else %}

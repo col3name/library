@@ -1,0 +1,14 @@
+<button type="button" data-open="deleteBook{{ bookCopy.Id  }}"><i class="fi-page-delete font-size-24 fi-left"></i>Удалить</button>
+<div class="reveal" id="deleteBook{{ bookCopy.Id  }}" data-reveal data-reset-on-close="true"
+     data-animation-in="fade-in" data-animation-out="fade-out">
+    <h1 class="alert">Предупреждение!</h1>
+    <p class="lead">Вы действительно хотите удалить книгу "{{ bookCopy.book.name }}"?</p>
+    <form action="{{ path('book_delete', { id: bookCopy.Id }) }}" method="post">
+        <input type="hidden" name="token" value="{{ csrf_token('delete-item') }}"/>
+        <button class="button" type="submit"><i class="fi-page-delete font-size-24 fi-left"></i>Да</button>
+    </form>
+    <button class="button" data-close aria-label="Close modal" type="button">Отмена</button>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>

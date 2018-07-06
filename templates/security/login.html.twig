@@ -2,22 +2,28 @@
 
 {% block form %}
     <div class="container">
-        <div class="container-card">
+        <div class="login-form">
             {% if error %}
+                <div>{{ error.message }}</div>
                 <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
             {% endif %}
 
-            <p><a href="{{ path('homepage') }}">Главная</a></p>
-            <p><a href="{{ path('register') }}">Регистрация</a></p>
             <h4>Вход</h4>
             <form action="{{ path('login') }}" method="post">
-                <label for="username">Логин:</label>
+                <label for="username">Username:</label>
                 <input class="text-wrap" type="text" id="username" name="_username" value="{{ last_username }}"/>
                 <label for="password">Пароль:</label>
                 <input type="password" id="password" name="_password"/>
                 <input type="hidden" name="_target_path" value="/main"/>
-                <button class="button" type="submit">Войти</button>
+
+                <input type="checkbox" id="remember_me" name="_remember_me" checked >
+                <label for="remember_me">Запоминть меня</label>
+
+               <div><button class="button" type="submit">Войти</button></div>
             </form>
+            <p class="text-center"><a href="{{ path('register') }}">Регистрация</a></p>
         </div>
+        <div class="login-bottom">
+            <p class="text-center"ф><a href="{{ path('homepage') }}">Вернуться на сервис</a></p> </div>
     </div>
 {% endblock %}

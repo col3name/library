@@ -28,7 +28,7 @@ class Genre
 
     /**
      * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="Book", mappedBy="genresBook", cascade={"persist", "remove"})
+     * @ORM\ManyToMany(targetEntity="Book", mappedBy="genresBook", cascade={"persist"})
      */
     private $books;
 

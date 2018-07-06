@@ -30,8 +30,8 @@ class RegisterUserType extends AbstractType
             ->add('username', TextType::class)
             ->add('plainPassword', RepeatedType::class, array(
                 'type' => PasswordType::class,
-                'first_options' => array('label' => 'Пароль'),
-                'second_options' => array('label' => 'Повторите пароль'),
+                'first_options' => ['label' => 'Пароль'],
+                'second_options' => ['label' => 'Повторите пароль'],
             ))
             ->add('submit', SubmitType::class, [
                 'label' => 'Зареистрироваться',
@@ -39,6 +39,7 @@ class RegisterUserType extends AbstractType
                     'class' => 'button'
                 ]])
             ->add('avatar', FileType::class, [
+                'label' => 'Изображение профиля',
                 'data_class' => null,
                 'label_format' => 'form.address.%name%',
             ]);

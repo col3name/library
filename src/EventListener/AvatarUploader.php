@@ -31,7 +31,7 @@ class AvatarUploader
     public function prePersist(LifecycleEventArgs $args) {
         $entity = $args->getEntity();
 
-//        $this->uploadFile($entity);
+        $this->uploadFile($entity);
     }
 
     /**

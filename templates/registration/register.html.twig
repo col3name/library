@@ -2,9 +2,7 @@
 
 {% block form %}
     <div class="container">
-        <div class="container-card">
-            <p><a href="{{ path('homepage') }}">Главная</a></p>
-            <p><a href="{{ path('login') }}">Войти</a></p>
+        <div class="login-form">
             <h4>Регистрация</h4>
             {{ form_start(form) }}
             {{ form_errors(form) }}
@@ -15,6 +13,9 @@
             {{ form_row(form.avatar) }}
             {{ form_row(form.submit) }}
             {{ form_end(form) }}
+            <p class="text-center"><a href="{{ path('login') }}">Вход</a></p>
         </div>
+        <div class="login-bottom">
+            <p class="text-center"ф><a href="{{ path('homepage') }}">Вернуться на сервис</a></p> </div>
     </div>
 {% endblock %}

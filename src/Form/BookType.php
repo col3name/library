@@ -33,10 +33,12 @@ class BookType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
+                'label' => 'Название',
                 'attr' => ['autofocus' => true],
             ])
             ->add('description', TextareaType::class, [
-                'attr' => array('rows' => '5'),
+                'label' => 'Описание (в Markdown)',
+                'attr' => ['rows' => '7'],
             ])
             ->add('isbn', TextType::class, [
                 'attr' => [
@@ -50,7 +52,7 @@ class BookType extends AbstractType
         $this->add($builder, 'authorsBook', Author::class, 'Авторы книги');
 
         $builder->add('pageNumber', IntegerType::class, [
-                'data' => 0,
+                'label' => 'Количество страниц',
                 'attr' => [
                     'min' => 0,
                     'max' => 10000,
@@ -58,7 +60,7 @@ class BookType extends AbstractType
                 ]
             ])
             ->add('publicationYear', IntegerType::class, [
-                'data' => 0,
+                'label' => 'Год публикации',
                 'attr' => [
                     'min' => -3000,
                     'max' => 4000,

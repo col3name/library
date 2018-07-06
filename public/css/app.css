@@ -63,12 +63,25 @@ ul, li, ol {
     position: absolute;
     left: 50%;
     top: 50%;
-    -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-    -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
-    -webkit-perspective: 1200px;
     perspective: 1200px;
+    box-shadow: 0 20px 40px rgba(0,0,0,.4);
+}
+
+.login-form {
+    width: 420px;
+    min-height: 270px;
+    height: 100%;
+    background: #fff;
+    border-radius: 0;
+    padding: 51px 34px 16px;
+}
+
+.login-bottom {
+    height: 100%;
+    padding: 17px 0 0;
+    background-color: rgba(90, 90, 90, 0.6);
 }
 
 .container-card {

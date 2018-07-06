@@ -13,6 +13,15 @@
                     'ditailedPage': 'Редактирование книги'
                 }) }}
             </div>
+            <div class="small-4 medium-6">
+                <div>
+                    <form action="{{ path('book_delete', { id: bookCopy.Id }) }}" method="post">
+                        <input type="hidden" name="token" value="{{ csrf_token('delete-item') }}"/>
+                        <button type="submit" class="button"><i class="fi-page-delete font-size-24 fi-left"></i>Удалить</button>
+                    </form>
+                </div>
+                <div><a class="button" href="{{ path('catalog_show', {'id': bookCopy.id}) }}"><i class="fi-page font-size-24 fi-left"></i>Показать</a></div>
+            </div>
             <div class="large-8 medium-6 cell">
                 {{ include('admin/book/_book-form.html.twig') }}
             </div>

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -12,6 +13,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
  */
 class SecurityController extends Controller
 {
+
     /**
      * @Route("/login", name="login")
      * @param AuthenticationUtils $authenticationUtils
@@ -34,6 +36,8 @@ class SecurityController extends Controller
      */
     public function logout(): void
     {
-        throw new \Exception('This should never be reached!');
+        $this->get('security.token_storage')->setToken(null);
+
+//        throw new \Exception('This should never be reached!');
     }
 }
