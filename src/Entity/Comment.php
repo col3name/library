@@ -10,16 +10,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity
  * @ORM\Table(name="comment")
  */
-class Comment
+class Comment extends BaseEntity
 {
     public const COMMENT_LIMIT = 5;
-
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
 
     /**
      * @ORM\Column(type="string")
@@ -63,23 +56,6 @@ class Comment
         $this->date = new \DateTime();
         $this->userFavorites = new ArrayCollection();
     }
-
-    /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param mixed $id
-     */
-    public function setId($id): void
-    {
-        $this->id = $id;
-    }
-
 
     /**
      * @return mixed
@@ -160,12 +136,10 @@ class Comment
     public function addUserFavorites($userFavorite): self
     {
         if (!$this->userFavorites->contains($userFavorite)) {
-            $this->userFavorites[] = $userFavorite;
-            $userFavorite->setCategory($this);
+            $this->userFavorites->add($userFavorite);
+//            $userFavorite->setCategory($this);
         }
 
         return $this;
     }
-
-
 }

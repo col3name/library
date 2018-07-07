@@ -2,9 +2,6 @@
 
 namespace App\Entity;
 
-use App\Entity\Genre;
-use App\Entity\Author;
-use App\Entity\BookCopy;
 //use App\Entity\PublishingHouse;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,19 +10,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Class Book
  * @package App\Entity
- * @ORM\Entity(repositoryClass="BookRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\BookRepository")
  * @ORM\Table(name="book")
  */
-class Book
+class Book extends BaseEntity
 {
-    /**
-     * @var int
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
     /**
      * @ORM\Column(type="string", length=255)
      */
@@ -83,7 +72,7 @@ class Book
 
     /**
      * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="Tag", inversedBy="tasks", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="Tag", inversedBy="books", cascade={"persist"})
      * @ORM\JoinTable(name="book_tag")
      */
     private $tags;
@@ -106,22 +95,6 @@ class Book
         $this->authorsBook = new ArrayCollection();
         $this->genresBook = new ArrayCollection();
         $this->tags = new ArrayCollection();
-    }
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId(int $id)
-    {
-        $this->id = $id;
     }
 
     /**
