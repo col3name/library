@@ -14,28 +14,30 @@
     <div class="small-12 cell">
         <h2>Книги у меня ({{ takenBooks|length }})</h2>
     </div>
-    <div class="grid-container">
-        <div id="showBooks" class="grid-x grid-padding cell">
-            {% for takenBook in takenBooks %}
-                <div class="small-12 medium-6 large-4 cell">
-                    <img class="book-image" src="/{{ takenBook.imagePath }}" alt="book image">
-                    <h5>
-                        <a href="{{ path('catalog_show', {'id': takenBook.bookCopyId}) }}">{{ takenBook.bookName }}</a>
-                    </h5>
-                    <div>
-                        <time>Когда взял: {{ takenBook.issueDate|date("m/d/Y    ") }}</time>
-                        <time>Крайний срок сдачи: {{ takenBook.deadlineDate|date("m/d/Y") }}</time>
+    <div class="small-12 cell">
+        <div class="grid-container">
+            <div id="showBooks" class="grid-x grid-padding cell">
+                {% for takenBook in takenBooks %}
+                    <div class="small-12 medium-6 large-4 cell">
+                        <img class="book-image" src="/{{ takenBook.imagePath }}" alt="book image">
+                        <h5>
+                            <a href="{{ path('catalog_show', {'id': takenBook.bookCopyId}) }}">{{ takenBook.bookName }}</a>
+                        </h5>
+                        <div>
+                            <time>Когда взял: {{ takenBook.issueDate|date("m/d/Y    ") }}</time>
+                            <time>Крайний срок сдачи: {{ takenBook.deadlineDate|date("m/d/Y") }}</time>
+                        </div>
+                        <p id="showMessage" class="hide"></p>
+                        <input type="button" class="button" id="returnBook" value="Вернуть книгу"
+                               data-issuanceId="{{ takenBook.issuanceId }}"
+                        >
                     </div>
-                    <p id="showMessage" class="hide"></p>
-                    <input type="button" class="button" id="returnBook" value="Вернуть книгу"
-                           data-issuanceId="{{ takenBook.issuanceId }}"
-                    >
-                </div>
-            {% else %}
-                <p>Книги не найдены</p>
-            {% endfor %}
+                {% else %}
+                    <p>Книги не найдены</p>
+                {% endfor %}
 
-            {#{{ include('profile/_history-issuance.html.twig', {'issuances':  takenBooks}) }}#}
+                {#{{ include('profile/_history-issuance.html.twig', {'issuances':  takenBooks}) }}#}
+            </div>
         </div>
     </div>
 {% endblock %}

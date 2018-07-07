@@ -23,7 +23,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
  * Class AdminController
  * @package App\Controller
  * @Security("has_role('ROLE_ADMIN')")
- * @Security("has_role('IS_AUTHENTICATED_FULLY')")
  */
 class AdminController extends Controller
 {
@@ -61,7 +60,6 @@ class AdminController extends Controller
      * @param Book $book
      * @param AuthorRepository $authorRepository
      * @return Response
-     * @Security("has_role('IS_AUTHENTICATED_FULLY')")
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/add-book", name="addBook")a
      */
@@ -94,7 +92,6 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/book/edit/{id}", requirements={"id": "\d+"}, name="book_edit")
-     * @Security("has_role('IS_AUTHENTICATED_FULLY')")
      * @Security("has_role('ROLE_ADMIN')")
      * @Method({"GET", "POST"})
      * @param Request $request
@@ -126,7 +123,6 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/book/newBook", requirements={"id": "\d+"}, name="book_new")
-     * @Security("has_role('IS_AUTHENTICATED_FULLY')")
      * @Security("has_role('ROLE_ADMIN')")
      * @Method({"GET", "POST"})
      * @param Request $request
