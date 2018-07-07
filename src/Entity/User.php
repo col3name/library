@@ -14,17 +14,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @UniqueEntity(fields="email", message="Email already taken")
  * @UniqueEntity(fields="username", message="Username already taken")
  */
-class User implements UserInterface, \Serializable
+class User extends BaseEntity implements UserInterface, \Serializable
 {
     const IMAGE_UPLOAD_DIRECTORY = 'upload/book/image/';
     const DEFAULT_AVATAR = '/image/camera_200.png';
-
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
@@ -119,21 +112,6 @@ class User implements UserInterface, \Serializable
         $this->readedBookCopy = new ArrayCollection();
     }
 
-    /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param mixed $id
-     */
-    public function setId($id): void
-    {
-        $this->id = $id;
-    }
 
     /**
      * @return mixed

@@ -12,21 +12,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity
  * @ORM\Table(name="bookCopy")
  */
-class BookCopy
+class BookCopy extends BaseEntity
 {
     public const IMAGE_UPLOAD_DIRECTORY = 'upload/book/image/';
     public const FILE_UPLOAD_DIRECTORY = 'upload/book/file/';
 
     public const NUM_ITEMS = 20;
     public const MAX_COUNT = 4;
-
-    /**
-     * @var int
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
 
     /**
      * @var Book
@@ -116,22 +108,6 @@ class BookCopy
         $this->comments = new ArrayCollection();
         $this->userFavoritesBook = new ArrayCollection();
         $this->userReadedBookCopy = new ArrayCollection();
-    }
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId(int $id)
-    {
-        $this->id = $id;
     }
 
     /**

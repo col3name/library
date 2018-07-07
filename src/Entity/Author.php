@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Entity\Book;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -12,16 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\Table(name="author")
  */
-class Author
+class Author extends BaseEntity
 {
-    /**
-     * @var int
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
     /**
      * @ORM\Column(type="string", length=255, unique=true)
      */
@@ -32,12 +23,6 @@ class Author
      * @ORM\ManyToMany(targetEntity="Book", mappedBy="authorsBook", cascade={"persist"})
      */
     private $books;
-
-    /**
-     * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="Task", mappedBy="tags", cascade={"persist", "remove"})
-     */
-    private $tasks;
 
     /**
      * @return int
